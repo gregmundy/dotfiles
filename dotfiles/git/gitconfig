@@ -1,0 +1,71 @@
+[user]
+    # TODO: Set your name and email
+    name = Greg Mundy
+    email = gregmundy@gmail.com
+
+[init]
+    defaultBranch = main
+
+[pull]
+    rebase = true
+
+[push]
+    autoSetupRemote = true
+
+[fetch]
+    prune = true
+
+[core]
+    excludesFile = ~/.gitignore_global
+    editor = code --wait
+    pager = less -FRX
+
+[color]
+    ui = auto
+
+[alias]
+    # Status and info
+    st = status -sb
+    lg = log --oneline --graph --decorate -20
+    lga = log --oneline --graph --decorate --all -20
+    last = log -1 HEAD --stat
+
+    # Branching
+    br = branch
+    co = checkout
+    cob = checkout -b
+    sw = switch
+    swc = switch -c
+
+    # Commits
+    cm = commit -m
+    ca = commit --amend
+    can = commit --amend --no-edit
+
+    # Diff
+    df = diff
+    dfs = diff --staged
+    diffw = diff --word-diff
+
+    # Reset
+    unstage = reset HEAD --
+    undo = reset --soft HEAD~1
+
+    # Stash
+    ss = stash
+    sp = stash pop
+    sl = stash list
+
+    # Shortcuts
+    p = pull
+    ps = push
+    f = fetch --all
+
+[diff]
+    colorMoved = default
+
+[merge]
+    conflictStyle = diff3
+
+[rerere]
+    enabled = true

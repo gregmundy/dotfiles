@@ -1,0 +1,47 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+
+# Editors
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.project
+.settings/
+*.sublime-workspace
+
+# Environment
+.env
+.env.local
+.env.*.local
+.envrc
+
+# Dependencies (should be in project .gitignore, but safety net)
+node_modules/
+__pycache__/
+*.pyc
+.pytest_cache/
+.mypy_cache/
+venv/
+.venv/
+
+# Build artifacts
+*.log
+*.tmp
+*.temp
+.cache/
+dist/
+build/
+coverage/
+
+# Secrets (safety net)
+*.pem
+*.key
+credentials.json
+secrets.yaml
