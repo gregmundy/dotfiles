@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
+set -euo pipefail
+
 # shellcheck source=/dev/null
 source "$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)/lib/bootstrap.sh"
 
-brew_ensure
+log "Installing Mac App Store CLI..."
 brew_install_formula mas
-
+log "✓ mas installed"

@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
+
 # shellcheck source=/dev/null
 source "$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)/lib/bootstrap.sh"
 
@@ -13,13 +14,13 @@ log "Ensuring Oh My Zsh direnv plugin is enabled..."
 
 if [[ ! -f "${ZSHRC}" ]]; then
   log "ERROR: ${ZSHRC} not found. Install Oh My Zsh first."
-  exit 1
+  return 1
 fi
 
 # If already present anywhere in the plugins block, do nothing.
 if grep -Eq '^[[:space:]]*plugins=\([^)]*\bdirenv\b' "${ZSHRC}"; then
   log "✓ direnv already present in plugins list"
-  exit 0
+  return 0
 fi
 
 # If no plugins block exists, add one (conservative default).
@@ -30,7 +31,7 @@ if ! grep -Eq '^[[:space:]]*plugins=\(' "${ZSHRC}"; then
     echo "plugins=(git direnv)"
   } >> "${ZSHRC}"
   log "✓ Added plugins block with direnv"
-  exit 0
+  return 0
 fi
 
 # Otherwise, insert 'direnv' into the first plugins=(...) block.
@@ -63,4 +64,4 @@ perl -0777 -i -pe '
 ' "${ZSHRC}"
 
 log "✓ Enabled direnv plugin in ${ZSHRC}"
-log "Restart your shell (or run: exec zsh)"
+log "NOTE: Restart your shell (or run: exec zsh)"

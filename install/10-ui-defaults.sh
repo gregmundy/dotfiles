@@ -1,7 +1,10 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-echo "==> Applying opinionated macOS UI defaults (Dock bottom, menu bar auto-hide)..."
+# shellcheck source=/dev/null
+source "$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)/lib/bootstrap.sh"
+
+log "Applying macOS UI defaults..."
 
 ###############################################################################
 # Dock
@@ -79,11 +82,10 @@ defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad TrackpadThreeF
 # Apply changes
 ###############################################################################
 
-echo "==> Restarting UI services..."
+log "Restarting UI services..."
 killall Dock >/dev/null 2>&1 || true
 killall Finder >/dev/null 2>&1 || true
 killall SystemUIServer >/dev/null 2>&1 || true
 
-echo "✅ UI defaults applied."
-echo "NOTE: If keyboard repeat doesn't feel updated, log out and back in."
-
+log "✓ UI defaults applied"
+log "NOTE: If keyboard repeat doesn't feel updated, log out and back in."
