@@ -42,12 +42,15 @@ source "$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)/lib/bootstrap.sh"
 ### Installer Naming Convention
 
 Scripts are prefixed with numbers to control execution order:
-- 00-09: Core setup (Homebrew, dependencies)
-- 10-29: System config, directories, Xcode
-- 30-49: Browsers, productivity apps
-- 50-69: Terminal, window management
-- 70-89: Additional tools
-- 90-99: Development environments (IDEs, language runtimes)
+- 00-09: Bootstrap (Homebrew, build dependencies)
+- 10-19: System config (macOS defaults, directories)
+- 20-29: Build tools (Xcode, mas)
+- 30-39: Terminal & shell (Ghostty, zsh, direnv)
+- 40-49: Window management (AeroSpace)
+- 50-59: Browsers
+- 60-69: Productivity (apps, AI tools)
+- 70-79: Dev tools (Docker, IDEs)
+- 90-99: Language runtimes (Elixir/Erlang)
 
 ### Writing New Installers
 
