@@ -11,6 +11,7 @@ brew_install_cask notion
 brew_install_cask spotify
 brew_install_cask slack
 brew_install_cask todoist
+brew_install_cask appcleaner
 
 log "Installing entertainment..."
 brew_install_cask steam
