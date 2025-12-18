@@ -1,0 +1,7 @@
+# SSH config for 1Password SSH agent
+# Note: You must enable SSH agent in 1Password app:
+# Settings → Developer → SSH Agent
+
+Host *
+    # Use 1Password SSH agent
+    IdentityAgent "~/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"

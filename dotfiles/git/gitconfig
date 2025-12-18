@@ -1,7 +1,6 @@
-[user]
-    # TODO: Set your name and email
-    name = Greg Mundy
-    email = gregmundy@gmail.com
+# Include local config (name, email - not committed to repo)
+[include]
+    path = ~/.gitconfig.local
 
 [init]
     defaultBranch = main

@@ -48,8 +48,13 @@ alias dlogs="docker logs -f"
 # Development
 alias c="code ."
 alias cr="cursor ."
+
+# Python/uv
 alias py="python3"
-alias pip="pip3"
+alias uvr="uv run"
+alias uvs="uv sync"
+alias uvi="uv pip install"
+alias uve="uv venv && source .venv/bin/activate"
 
 # Quick edits
 alias zshrc="$EDITOR ~/.zshrc"

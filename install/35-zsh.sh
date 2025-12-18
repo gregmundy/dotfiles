@@ -9,17 +9,6 @@ ZSH_DIR="${HOME}/.oh-my-zsh"
 ZSH_CUSTOM="${ZSH_CUSTOM:-${ZSH_DIR}/custom}"
 ZSH_PLUGINS_DIR="${ZSH_CUSTOM}/plugins"
 
-backup_file_once_per_run() {
-  local file="$1"
-  if [[ -f "$file" ]]; then
-    local ts backup
-    ts="$(date +"%Y%m%d-%H%M%S")"
-    backup="${file}.bak.${ts}"
-    cp -p "$file" "$backup"
-    log "Backed up $(basename "$file") -> $(basename "$backup")"
-  fi
-}
-
 ensure_login_shell_is_zsh() {
   local current_shell
   current_shell="$(dscl . -read "${HOME}" UserShell 2>/dev/null | awk '{print $2}' || true)"
@@ -37,11 +26,35 @@ ensure_zsh_theme() {
   local theme="$1"
   touch "$ZSHRC"
 
+  # Check if theme is already set correctly
+  if grep -Eq "^ZSH_THEME=\"${theme}\"" "$ZSHRC"; then
+    log "✓ ZSH_THEME already set to ${theme}"
+    return 0
+  fi
+
   if grep -Eq '^ZSH_THEME=' "$ZSHRC"; then
     sed -i '' "s/^ZSH_THEME=.*/ZSH_THEME=\"${theme}\"/" "$ZSHRC"
+    log "✓ Updated ZSH_THEME to ${theme}"
   else
     echo "ZSH_THEME=\"${theme}\"" >> "$ZSHRC"
+    log "✓ Added ZSH_THEME=${theme}"
   fi
+}
+
+# Check if plugins line contains all required plugins in correct order
+plugins_need_update() {
+  local existing="$1"
+  # Check for required plugins
+  for plugin in git direnv asdf zsh-autosuggestions; do
+    if [[ "$existing" != *"$plugin"* ]]; then
+      return 0  # needs update
+    fi
+  done
+  # Check that zsh-syntax-highlighting is present and last
+  if [[ "$existing" != *"zsh-syntax-highlighting)" ]]; then
+    return 0  # needs update
+  fi
+  return 1  # no update needed
 }
 
 # Extract first plugins=(...) line content (best effort, single-line)
@@ -106,6 +119,13 @@ ensure_plugins_in_zshrc() {
 
   if [[ -z "$existing" ]]; then
     echo "plugins=(git direnv asdf zsh-autosuggestions zsh-syntax-highlighting)" >> "$ZSHRC"
+    log "✓ Added plugins to .zshrc"
+    return 0
+  fi
+
+  # Check if update is needed
+  if ! plugins_need_update "$existing"; then
+    log "✓ Plugins already configured correctly"
     return 0
   fi
 
@@ -118,6 +138,7 @@ ensure_plugins_in_zshrc() {
     { print }
   ' "$ZSHRC" > "${ZSHRC}.tmp"
   mv "${ZSHRC}.tmp" "$ZSHRC"
+  log "✓ Updated plugins in .zshrc"
 }
 
 # --- begin ----------------------------------------------------------------
@@ -125,15 +146,13 @@ ensure_plugins_in_zshrc() {
 log "Checking login shell..."
 ensure_login_shell_is_zsh
 
-log "Preparing to edit ~/.zshrc..."
-backup_file_once_per_run "$ZSHRC"
-
 log "Installing oh-my-zsh (if needed)..."
 if [[ -d "$ZSH_DIR" ]]; then
   log "✓ oh-my-zsh already installed"
 else
   RUNZSH=no CHSH=no sh -c \
     "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+  log "✓ oh-my-zsh installed"
 fi
 
 log "Installing zsh plugins (if needed)..."
@@ -144,6 +163,7 @@ if [[ -d "${ZSH_PLUGINS_DIR}/zsh-autosuggestions" ]]; then
 else
   git clone https://github.com/zsh-users/zsh-autosuggestions.git \
     "${ZSH_PLUGINS_DIR}/zsh-autosuggestions"
+  log "✓ zsh-autosuggestions installed"
 fi
 
 if [[ -d "${ZSH_PLUGINS_DIR}/zsh-syntax-highlighting" ]]; then
@@ -151,13 +171,13 @@ if [[ -d "${ZSH_PLUGINS_DIR}/zsh-syntax-highlighting" ]]; then
 else
   git clone https://github.com/zsh-users/zsh-syntax-highlighting.git \
     "${ZSH_PLUGINS_DIR}/zsh-syntax-highlighting"
+  log "✓ zsh-syntax-highlighting installed"
 fi
 
-log "Enabling plugins in ~/.zshrc (syntax-highlighting last)..."
+log "Configuring plugins in ~/.zshrc..."
 ensure_plugins_in_zshrc
 
-log "Setting oh-my-zsh theme to steeef..."
+log "Configuring theme..."
 ensure_zsh_theme steeef
 
 log "✓ Zsh setup complete"
-log "NOTE: Restart your terminal or run: source ~/.zshrc"

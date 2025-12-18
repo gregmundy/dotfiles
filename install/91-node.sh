@@ -51,6 +51,20 @@ zstyle '"'"':omz:plugins:nvm'"'"' autoload true\
   log "✓ Added nvm zstyle directive"
 fi
 
+# Deploy default-packages (auto-installed with each new Node version)
+REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+SRC_PACKAGES="${REPO_ROOT}/dotfiles/nvm/default-packages"
+DEST_PACKAGES="${NVM_DIR}/default-packages"
+
+if [[ -f "${SRC_PACKAGES}" ]]; then
+  if [[ -f "${DEST_PACKAGES}" ]] && cmp -s "${SRC_PACKAGES}" "${DEST_PACKAGES}"; then
+    log "✓ default-packages already up to date"
+  else
+    cp -a "${SRC_PACKAGES}" "${DEST_PACKAGES}"
+    log "✓ Installed default-packages"
+  fi
+fi
+
 # Source nvm for this script
 export NVM_DIR="${NVM_DIR}"
 # shellcheck source=/dev/null
@@ -59,15 +73,23 @@ export NVM_DIR="${NVM_DIR}"
 # Install latest LTS and set as default
 log "Installing latest LTS Node.js..."
 if command -v nvm &>/dev/null; then
-  nvm install --lts
-  nvm alias default 'lts/*'
-  log "✓ Node.js LTS installed and set as default"
+  # Check if LTS is already installed
+  LTS_VERSION=$(nvm version-remote --lts 2>/dev/null || echo "")
+  if [[ -n "$LTS_VERSION" ]] && nvm ls "$LTS_VERSION" &>/dev/null; then
+    log "✓ Node.js LTS ($LTS_VERSION) already installed"
+  else
+    nvm install --lts
+    log "✓ Node.js LTS installed"
+  fi
+
+  # Ensure default is set to LTS
+  nvm alias default 'lts/*' &>/dev/null
+  log "✓ Default set to LTS"
   log "   Node version: $(node --version)"
   log "   npm version: $(npm --version)"
 else
-  log "ERROR: nvm not available in current shell"
-  log "NOTE: Restart your terminal and run: nvm install --lts && nvm alias default 'lts/*'"
-  return 0
+  log "NOTE: nvm not available in current shell"
+  log "      Restart terminal and run: nvm install --lts && nvm alias default 'lts/*'"
 fi
 
 log "✓ nvm setup complete"

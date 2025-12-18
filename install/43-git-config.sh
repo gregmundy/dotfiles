@@ -56,4 +56,37 @@ else
   log "✓ Installed ${DEST_IGNORE}"
 fi
 
-log "NOTE: Update ~/.gitconfig with your name and email!"
+# Handle local config (personal details - not in repo)
+DEST_LOCAL="${HOME}/.gitconfig.local"
+
+if [[ -f "${DEST_LOCAL}" ]]; then
+  log "✓ gitconfig.local already exists"
+else
+  log "Creating gitconfig.local (personal details)..."
+
+  # Prompt for name
+  read -rp "Enter your full name for git commits: " GIT_NAME
+  if [[ -z "${GIT_NAME}" ]]; then
+    log "ERROR: Name cannot be empty"
+    return 1
+  fi
+
+  # Prompt for email
+  read -rp "Enter your email for git commits: " GIT_EMAIL
+  if [[ -z "${GIT_EMAIL}" ]]; then
+    log "ERROR: Email cannot be empty"
+    return 1
+  fi
+
+  # Create local config
+  cat > "${DEST_LOCAL}" << EOF
+# Local git config (not committed to repo)
+[user]
+    name = ${GIT_NAME}
+    email = ${GIT_EMAIL}
+EOF
+
+  log "✓ Created ${DEST_LOCAL}"
+fi
+
+log "✓ Git configs installed"

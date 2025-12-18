@@ -3,7 +3,13 @@
     "allow": [
       "Bash(ls:*)",
       "Bash(chmod:*)",
-      "Bash(tree:*)"
+      "Bash(tree:*)",
+      "Bash(brew search:*)",
+      "WebSearch",
+      "Bash(mas search:*)",
+      "WebFetch(domain:github.com)",
+      "Bash(source:*)",
+      "Bash(git mv:*)"
     ]
   }
 }

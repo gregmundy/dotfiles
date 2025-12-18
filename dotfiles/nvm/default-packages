@@ -1,0 +1,8 @@
+# Packages installed automatically with each new Node version
+
+bun
+eas-cli
+inngest-cli
+serverless
+ts-node
+yarn
