@@ -8,4 +8,5 @@ log "Installing productivity tools..."
 brew_install_cask raycast
 brew_install_cask obsidian
 brew_install_cask notion
+brew_install_cask spotify
 log "✓ Productivity tools installed"

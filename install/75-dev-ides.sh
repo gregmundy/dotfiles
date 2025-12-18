@@ -10,4 +10,5 @@ brew_install_cask visual-studio-code
 brew_install_cask cursor
 brew_install_cask cursor-cli
 brew_install_cask claude-code
+brew_install_formula opencode
 log "✓ Development IDEs installed"
