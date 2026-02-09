@@ -13,9 +13,6 @@ log "Applying macOS UI defaults..."
 # Dock size (balanced)
 defaults write com.apple.dock tilesize -int 36
 
-# No magnification (consistent muscle memory)
-defaults write com.apple.dock magnification -bool false
-
 # Auto-hide Dock + remove delay (feels instant)
 defaults write com.apple.dock autohide -bool true
 
