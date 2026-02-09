@@ -10,7 +10,7 @@ cd ~/Development/dotfiles
 ./setup.sh
 ```
 
-You'll be prompted for your sudo password once at the start. The setup is fully idempotent—run it again anytime to update or restore your configuration.
+The setup is fully idempotent—run it again anytime to update or restore your configuration. Some steps (Xcode, App Store apps) may prompt for your sudo password.
 
 ---
 
@@ -20,11 +20,11 @@ You'll be prompted for your sudo password once at the start. The setup is fully 
 
 | Category | Tools |
 |----------|-------|
-| **Languages** | Node.js (nvm), Python (uv), Go, Elixir/Erlang |
+| **Languages** | Node.js (nvm), Python (uv), Go, Elixir/Erlang, Rust, Java, OpenTofu |
 | **Editors** | VS Code, Neovim, Vim |
 | **Containers** | Docker, Colima |
 | **API Testing** | Postman, Insomnia |
-| **Database** | DBeaver, NoSQLBooster, MongoDB Atlas CLI |
+| **Database** | DBeaver, NoSQLBooster, MongoDB Atlas CLI, RedisInsight |
 | **Version Control** | Git, Git LFS, GitHub CLI |
 
 ### CLI Tools
@@ -34,13 +34,17 @@ jq        JSON processor           fzf       Fuzzy finder
 yq        YAML processor           ripgrep   Fast grep
 bat       Better cat               eza       Modern ls
 gh        GitHub CLI               btop      System monitor
+lazygit   Git TUI                  lazydocker Docker TUI
+zoxide    Smarter cd               tldr      Simplified man pages
+httpie    HTTP client              delta     Better git diffs
+jless     JSON viewer              tmux      Terminal multiplexer
 ```
 
 ### Applications
 
 | Category | Apps |
 |----------|------|
-| **Productivity** | Raycast, Obsidian, Notion, Todoist, AppCleaner |
+| **Productivity** | Raycast, Obsidian, Notion, Todoist, Linear, Figma, AppCleaner |
 | **Communication** | Slack, Discord, Zoom |
 | **Browsers** | Chrome, Firefox |
 | **AI** | Claude, ChatGPT, Cursor |
@@ -52,7 +56,7 @@ gh        GitHub CLI               btop      System monitor
 
 - **Terminal**: Ghostty with Gruvbox Dark theme
 - **Shell**: Zsh with Oh My Zsh, custom aliases and functions
-- **Window Manager**: AeroSpace (tiling window manager)
+- **Window Manager**: Rectangle
 - **macOS Defaults**: Optimized Finder, Dock, keyboard settings
 
 ---
@@ -61,7 +65,6 @@ gh        GitHub CLI               btop      System monitor
 
 ```
 dotfiles/
-├── aerospace/       # Tiling window manager config
 ├── ghostty/         # Terminal emulator config
 ├── git/             # gitconfig, gitignore_global
 ├── nvim/            # Neovim configuration (init.lua)

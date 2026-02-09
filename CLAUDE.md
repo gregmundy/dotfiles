@@ -46,7 +46,7 @@ Scripts are prefixed with numbers to control execution order:
 - 10-19: System config (macOS defaults, directories, editorconfig)
 - 20-29: Build tools (Xcode, mas)
 - 30-39: Terminal & shell (Ghostty, tmux, zsh, direnv)
-- 40-49: Window management, git config, SSH
+- 40-49: Window management (Rectangle), git config, SSH
 - 50-59: Browsers
 - 60-69: Productivity (apps, AI tools)
 - 70-79: Dev tools (Docker, IDEs, API tools, database clients)
