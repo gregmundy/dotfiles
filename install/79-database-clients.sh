@@ -13,4 +13,7 @@ brew_install_cask dbeaver-community
 brew_install_cask nosqlbooster-for-mongodb
 brew_install_formula mongodb-atlas-cli
 
+# Redis
+brew_install_cask redis-insight
+
 log "✓ Database clients installed"

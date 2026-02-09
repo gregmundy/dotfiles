@@ -36,6 +36,10 @@ alias gd="git diff"
 alias gds="git diff --staged"
 alias gl="git log --oneline -20"
 
+# Lazygit / Lazydocker
+alias lg="lazygit"
+alias lzd="lazydocker"
+
 # Docker
 alias d="docker"
 alias dc="docker compose"
@@ -65,6 +69,10 @@ alias ports="lsof -i -P -n | grep LISTEN"
 alias ip="curl -s ifconfig.me"
 alias localip="ipconfig getifaddr en0"
 alias flushdns="sudo dscacheutil -flushcache; sudo killall -HUP mDNSResponder"
+
+# OpenTofu (Terraform replacement)
+alias terraform="tofu"
+alias tf="tofu"
 
 # Misc
 alias cls="clear"

@@ -12,6 +12,8 @@ brew_install_cask spotify
 brew_install_cask slack
 brew_install_cask todoist
 brew_install_cask appcleaner
+brew_install_cask linear-linear
+brew_install_cask figma
 
 log "Installing entertainment..."
 brew_install_cask steam

@@ -22,4 +22,28 @@ brew_install_formula gh
 # System monitoring
 brew_install_formula btop
 
+# Code formatting/linting
+brew_install_formula biome
+
+# Git TUI
+brew_install_formula lazygit
+
+# Docker TUI
+brew_install_formula lazydocker
+
+# Smarter cd with frecency
+brew_install_formula zoxide
+
+# Simplified man pages
+brew_install_formula tldr
+
+# HTTP client
+brew_install_formula httpie
+
+# Better git diffs
+brew_install_formula git-delta
+
+# Interactive JSON viewer
+brew_install_formula jless
+
 log "✓ CLI tools installed"

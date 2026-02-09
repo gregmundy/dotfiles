@@ -17,7 +17,15 @@
 [core]
     excludesFile = ~/.gitignore_global
     editor = code --wait
-    pager = less -FRX
+    pager = delta
+
+[interactive]
+    diffFilter = delta --color-only
+
+[delta]
+    navigate = true
+    side-by-side = true
+    line-numbers = true
 
 [color]
     ui = auto
@@ -64,7 +72,13 @@
     colorMoved = default
 
 [merge]
-    conflictStyle = diff3
+    conflictStyle = zdiff3
+
+[gpg]
+    format = ssh
+
+[gpg "ssh"]
+    program = /Applications/1Password.app/Contents/MacOS/op-ssh-sign
 
 [rerere]
     enabled = true

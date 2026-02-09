@@ -43,14 +43,14 @@ source "$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)/lib/bootstrap.sh"
 
 Scripts are prefixed with numbers to control execution order:
 - 00-09: Bootstrap (Homebrew, build dependencies)
-- 10-19: System config (macOS defaults, directories)
+- 10-19: System config (macOS defaults, directories, editorconfig)
 - 20-29: Build tools (Xcode, mas)
-- 30-39: Terminal & shell (Ghostty, zsh, direnv)
-- 40-49: Window management (AeroSpace)
+- 30-39: Terminal & shell (Ghostty, tmux, zsh, direnv)
+- 40-49: Window management, git config, SSH
 - 50-59: Browsers
 - 60-69: Productivity (apps, AI tools)
-- 70-79: Dev tools (Docker, IDEs)
-- 90-99: Language runtimes (Elixir/Erlang)
+- 70-79: Dev tools (Docker, IDEs, API tools, database clients)
+- 90-99: Language runtimes (Elixir/Erlang, Node, Python, Go, Rust, Java, OpenTofu)
 
 ### Writing New Installers
 

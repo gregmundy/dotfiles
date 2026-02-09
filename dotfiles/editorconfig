@@ -27,3 +27,12 @@ indent_size = 2
 
 [*.{json,jsonc}]
 indent_size = 2
+
+[*.rs]
+indent_size = 4
+
+[*.java]
+indent_size = 4
+
+[*.{tf,tfvars}]
+indent_size = 2
