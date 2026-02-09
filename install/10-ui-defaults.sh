@@ -25,9 +25,6 @@ defaults write com.apple.dock orientation -string bottom
 # Minimize windows into app icon (keeps Dock tidy)
 defaults write com.apple.dock minimize-to-application -bool true
 
-# Faster Mission Control animation
-defaults write com.apple.dock expose-animation-duration -float 0.1
-
 # Prevent Spaces from reordering automatically
 defaults write com.apple.dock mru-spaces -bool false
 
