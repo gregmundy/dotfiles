@@ -9,7 +9,21 @@
       "Bash(mas search:*)",
       "WebFetch(domain:github.com)",
       "Bash(source:*)",
-      "Bash(git mv:*)"
+      "Bash(git mv:*)",
+      "Bash(brew info:*)",
+      "Bash(bash:*)",
+      "Bash(bash -n:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git rm:*)",
+      "Bash(mas list:*)",
+      "Bash(brew list:*)",
+      "Bash(sudo mas uninstall:*)",
+      "Bash(mas uninstall:*)",
+      "Bash(defaults delete:*)",
+      "Bash(killall:*)",
+      "Bash(defaults read:*)",
+      "Bash(defaults write:*)"
     ]
   }
 }
