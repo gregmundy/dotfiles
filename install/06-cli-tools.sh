@@ -49,4 +49,7 @@ brew_install_formula jless
 # Cross-shell prompt
 brew_install_formula starship
 
+# Font used by Ghostty and VS Code configs
+brew_install_cask font-jetbrains-mono-nerd-font
+
 log "✓ CLI tools installed"

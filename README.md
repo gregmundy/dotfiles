@@ -22,7 +22,7 @@ The setup is fully idempotent—run it again anytime to update or restore your c
 |----------|-------|
 | **Languages** | Node.js (nvm), Python (uv), Go, Elixir/Erlang, Rust, Java, OpenTofu |
 | **Editors** | VS Code, Neovim, Vim |
-| **Containers** | Docker, Colima |
+| **Containers** | Docker |
 | **API Testing** | Postman, Insomnia |
 | **Database** | DBeaver, NoSQLBooster, MongoDB Atlas CLI, RedisInsight |
 | **Version Control** | Git, Git LFS, GitHub CLI |
@@ -46,16 +46,16 @@ jless     JSON viewer              tmux      Terminal multiplexer
 |----------|------|
 | **Productivity** | Raycast, Obsidian, Notion, Todoist, Linear, Figma, AppCleaner |
 | **Communication** | Slack, Discord, Zoom |
-| **Browsers** | Chrome, Firefox |
+| **Browsers** | Chrome, DuckDuckGo |
 | **AI** | Claude, ChatGPT, Cursor |
-| **Media** | Spotify, IINA |
+| **Media** | Spotify |
 | **Security** | 1Password, 1Password CLI |
 | **Entertainment** | Steam |
 
 ### System Configuration
 
 - **Terminal**: Ghostty with Gruvbox Dark theme
-- **Shell**: Zsh with Oh My Zsh, custom aliases and functions
+- **Shell**: Zsh with Oh My Zsh, Starship prompt, custom aliases and functions
 - **Window Manager**: Rectangle
 - **macOS Defaults**: Optimized Finder, Dock, keyboard settings
 
@@ -93,7 +93,7 @@ Scripts in `install/` run in numeric order:
 | `50-59` | Browsers |
 | `60-69` | Productivity & communication |
 | `70-79` | Dev tools (Docker, IDEs, databases) |
-| `90-99` | Language runtimes |
+| `90-99` | Language runtimes & mobile dev |
 
 ### Library Functions
 

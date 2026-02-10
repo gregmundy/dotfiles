@@ -11,8 +11,15 @@ log "Installing nvm..."
 
 # Install nvm if not present
 if [[ ! -d "${NVM_DIR}" ]]; then
-  curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
-  log "✓ nvm installed"
+  # Fetch latest nvm release tag from GitHub
+  NVM_LATEST="$(curl -fsSL https://api.github.com/repos/nvm-sh/nvm/releases/latest | jq -r '.tag_name')"
+  if [[ -z "${NVM_LATEST}" || "${NVM_LATEST}" == "null" ]]; then
+    log "ERROR: Could not determine latest nvm version"
+    return 1
+  fi
+  log "Installing nvm ${NVM_LATEST}..."
+  curl -o- "https://raw.githubusercontent.com/nvm-sh/nvm/${NVM_LATEST}/install.sh" | bash
+  log "✓ nvm ${NVM_LATEST} installed"
 else
   log "✓ nvm already installed"
 fi
