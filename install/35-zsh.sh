@@ -177,7 +177,7 @@ fi
 log "Configuring plugins in ~/.zshrc..."
 ensure_plugins_in_zshrc
 
-log "Configuring theme..."
-ensure_zsh_theme steeef
+log "Disabling OMZ theme (Starship handles the prompt)..."
+ensure_zsh_theme ""
 
 log "✓ Zsh setup complete"

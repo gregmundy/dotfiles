@@ -46,4 +46,7 @@ brew_install_formula git-delta
 # Interactive JSON viewer
 brew_install_formula jless
 
+# Cross-shell prompt
+brew_install_formula starship
+
 log "✓ CLI tools installed"
