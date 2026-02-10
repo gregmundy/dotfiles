@@ -2,3 +2,6 @@ erl_crash.dump
 
 # Local configs with personal details (never commit)
 dotfiles/git/gitconfig.local
+
+# Claude configs
+.claude/*
