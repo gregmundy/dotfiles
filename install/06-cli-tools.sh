@@ -46,9 +46,6 @@ brew_install_formula git-delta
 # Interactive JSON viewer
 brew_install_formula jless
 
-# JavaScript runtime
-brew_install_formula bun
-
 # Cross-shell prompt
 brew_install_formula starship
 
