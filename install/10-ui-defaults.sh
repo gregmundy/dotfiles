@@ -13,7 +13,11 @@ log "Applying macOS UI defaults..."
 # Dock size (balanced)
 defaults write com.apple.dock tilesize -int 36
 
-# Auto-hide Dock + remove delay (feels instant)
+# Magnification on hover (54px, up from 36px base)
+defaults write com.apple.dock magnification -bool true
+defaults write com.apple.dock largesize -int 54
+
+# Auto-hide Dock (default animation speed)
 defaults write com.apple.dock autohide -bool true
 
 # Dock at the bottom (your preference)
