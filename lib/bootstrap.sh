@@ -32,7 +32,7 @@ log() {
     "ERROR:"*)
       ui_error "${msg#ERROR: }" ;;
     "NOTE:"*)
-      ui_note "${msg#NOTE: }" ;;
+      ui_defer_note "${msg#NOTE: }" ;;
     "")
       echo "" ;;
     *)

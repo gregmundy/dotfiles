@@ -25,6 +25,8 @@ if [[ -z "${_UI_STEP_CURRENT:-}" ]]; then
   _UI_COUNT_INSTALLED=0
   _UI_COUNT_SKIPPED=0
   _UI_COUNT_ERRORS=0
+  _UI_DEFERRED_NOTES=()
+  _UI_CURRENT_SCRIPT=""
 fi
 
 ui_progress_init() {
@@ -37,6 +39,7 @@ ui_progress_init() {
 ui_header() {
   local title="$1"
   _UI_STEP_CURRENT=$(( _UI_STEP_CURRENT + 1 ))
+  _UI_CURRENT_SCRIPT="$title"
 
   echo ""
   if _have_gum; then
@@ -122,6 +125,57 @@ ui_note() {
     gum style --foreground '#6B7280' --italic " ${icon} ${msg}"
   else
     echo "  NOTE: $msg"
+  fi
+}
+
+# ── Deferred notes (shown after all scripts) ─────────────────────────
+
+ui_defer_note() {
+  local msg="$1"
+  _UI_DEFERRED_NOTES+=("${_UI_CURRENT_SCRIPT}|${msg}")
+}
+
+ui_show_notes() {
+  if [[ ${#_UI_DEFERRED_NOTES[@]} -eq 0 ]]; then
+    return
+  fi
+
+  echo ""
+  if _have_gum; then
+    local label
+    label="$(gum style --bold --foreground '#F59E0B' "Post-install setup")"
+    local line
+    line="$(gum style --foreground '#3F3F46' "────────────────────────────────────────")"
+    echo " ${label}"
+    echo " ${line}"
+
+    local last_script=""
+    for entry in "${_UI_DEFERRED_NOTES[@]}"; do
+      local script="${entry%%|*}"
+      local note="${entry#*|}"
+      if [[ "$script" != "$last_script" ]]; then
+        echo ""
+        gum style --bold --foreground '#A78BFA' "   ${script}"
+        last_script="$script"
+      fi
+      local icon
+      icon="$(gum style --foreground '#F59E0B' "→")"
+      gum style " ${icon} ${note}"
+    done
+  else
+    echo "  POST-INSTALL SETUP"
+    echo "  ─────────────────"
+    local last_script=""
+    for entry in "${_UI_DEFERRED_NOTES[@]}"; do
+      local script="${entry%%|*}"
+      local note="${entry#*|}"
+      if [[ "$script" != "$last_script" ]]; then
+        echo ""
+        echo "  [$script]"
+        last_script="$script"
+      fi
+      echo "    → $note"
+    done
   fi
 }
 

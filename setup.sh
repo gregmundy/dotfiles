@@ -37,5 +37,7 @@ for f in "$INSTALL_DIR"/*.sh; do
   source "$f"
 done
 
+ui_show_notes
+
 ELAPSED="$(( SECONDS - START_TIME ))"
 ui_complete "$ELAPSED"
