@@ -16,14 +16,26 @@ source "${ROOT_DIR}/lib/fs.sh"
 source "${ROOT_DIR}/lib/xcodes.sh"
 
 # Route log() through ui helpers.
-# Parses prefixes (✓, ERROR:, NOTE:) to pick the right style.
+# Parses prefixes to pick the right style:
+#   ✓ ... already ...  → dimmed (skipped)
+#   ✓ ...              → green success
+#   ERROR: ...         → red error
+#   NOTE: ...          → dimmed note
+#   (anything else)    → step in progress
 log() {
   local msg="$*"
   case "$msg" in
-    "✓ "*)   ui_success "${msg#✓ }" ;;
-    "ERROR:"*) ui_error "${msg#ERROR: }" ;;
-    "NOTE:"*)  ui_note "${msg#NOTE: }" ;;
-    "")        echo "" ;;
-    *)         ui_step "$msg" ;;
+    "✓ "*already*|"✓ "*"already"*|"✓ "*"up to date"*|"✓ "*"not needed"*)
+      ui_skip "${msg#✓ }" ;;
+    "✓ "*)
+      ui_success "${msg#✓ }" ;;
+    "ERROR:"*)
+      ui_error "${msg#ERROR: }" ;;
+    "NOTE:"*)
+      ui_note "${msg#NOTE: }" ;;
+    "")
+      echo "" ;;
+    *)
+      ui_step "$msg" ;;
   esac
 }

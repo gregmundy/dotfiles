@@ -15,44 +15,27 @@ if [[ ! -d "$INSTALL_DIR" ]]; then
   exit 1
 fi
 
-# Welcome banner
-if _have_gum; then
-  echo ""
-  gum style \
-    --bold \
-    --foreground 4 \
-    --border double \
-    --padding "1 3" \
-    --align center \
-    "macOS Dotfiles Setup" \
-    "" \
-    "Setting up your development environment"
-  echo ""
-else
-  echo ""
-  echo "=== macOS Dotfiles Setup ==="
-  echo ""
-fi
+# Count scripts for progress tracking
+SCRIPT_COUNT=0
+for f in "$INSTALL_DIR"/*.sh; do
+  [[ -f "$f" ]] && (( SCRIPT_COUNT++ ))
+done
+
+START_TIME="$SECONDS"
+
+ui_welcome
+ui_progress_init "$SCRIPT_COUNT"
 
 # Source each installer in order
 for f in "$INSTALL_DIR"/*.sh; do
   [[ -f "$f" ]] || continue
-  local_name="$(basename "$f")"
-  ui_header "${local_name%.sh}"
+  local_name="$(basename "$f" .sh)"
+  # Strip numeric prefix for cleaner display (e.g., "05-misc-deps" → "misc-deps")
+  display_name="${local_name#[0-9][0-9]-}"
+  ui_header "$display_name"
   # shellcheck source=/dev/null
   source "$f"
 done
 
-# Done
-echo ""
-if _have_gum; then
-  gum style \
-    --bold \
-    --foreground 2 \
-    --border rounded \
-    --padding "0 3" \
-    "✓ Setup complete!"
-else
-  echo "✓ Setup complete!"
-fi
-echo ""
+ELAPSED="$(( SECONDS - START_TIME ))"
+ui_complete "$ELAPSED"

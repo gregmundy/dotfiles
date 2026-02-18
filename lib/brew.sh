@@ -40,19 +40,19 @@ brew_has_cask()    { brew list --cask "$1" >/dev/null 2>&1; }
 brew_install_formula() {
   local name="$1"
   if brew_has_formula "$name"; then
-    ui_success "Already installed: $name"
+    ui_skip "$name"
   else
     ui_spin "Installing $name..." brew install "$name"
-    ui_success "Installed: $name"
+    ui_success "$name"
   fi
 }
 
 brew_install_cask() {
   local name="$1"
   if brew_has_cask "$name"; then
-    ui_success "Already installed: $name"
+    ui_skip "$name"
   else
     ui_spin "Installing $name..." brew install --cask "$name"
-    ui_success "Installed: $name"
+    ui_success "$name"
   fi
 }
