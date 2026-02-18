@@ -4,10 +4,9 @@ set -euo pipefail
 ensure_dir() {
   local dir="$1"
   if [[ -d "$dir" ]]; then
-    echo "✓ Directory exists: $dir"
+    ui_success "Directory exists: $dir"
   else
     mkdir -p "$dir"
-    echo "Created directory: $dir"
+    ui_success "Created directory: $dir"
   fi
 }
-

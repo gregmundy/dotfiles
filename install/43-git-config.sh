@@ -65,14 +65,14 @@ else
   log "Creating gitconfig.local (personal details)..."
 
   # Prompt for name
-  read -rp "Enter your full name for git commits: " GIT_NAME
+  GIT_NAME="$(ui_input "Full name for git commits:")"
   if [[ -z "${GIT_NAME}" ]]; then
     log "ERROR: Name cannot be empty"
     return 1
   fi
 
   # Prompt for email
-  read -rp "Enter your email for git commits: " GIT_EMAIL
+  GIT_EMAIL="$(ui_input "Email for git commits:")"
   if [[ -z "${GIT_EMAIL}" ]]; then
     log "ERROR: Email cannot be empty"
     return 1

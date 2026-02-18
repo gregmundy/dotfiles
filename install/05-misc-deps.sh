@@ -5,6 +5,7 @@ set -euo pipefail
 source "$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)/lib/bootstrap.sh"
 
 log "Installing misc dependencies..."
+brew_install_formula gum
 brew_install_formula jq
 brew_install_formula aria2
 brew_install_formula autoconf
