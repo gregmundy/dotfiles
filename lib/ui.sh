@@ -17,8 +17,11 @@ _have_gum() { command -v gum >/dev/null 2>&1; }
 # Call ui_progress_init with total step count before the loop.
 # Call ui_header for each step (auto-increments).
 
-_UI_STEP_CURRENT=0
-_UI_STEP_TOTAL=0
+# Only init on first source (avoid reset when installers re-source bootstrap)
+if [[ -z "${_UI_STEP_CURRENT:-}" ]]; then
+  _UI_STEP_CURRENT=0
+  _UI_STEP_TOTAL=0
+fi
 
 ui_progress_init() {
   _UI_STEP_CURRENT=0

@@ -18,7 +18,7 @@ fi
 # Count scripts for progress tracking
 SCRIPT_COUNT=0
 for f in "$INSTALL_DIR"/*.sh; do
-  [[ -f "$f" ]] && (( SCRIPT_COUNT++ ))
+  [[ -f "$f" ]] && SCRIPT_COUNT=$(( SCRIPT_COUNT + 1 ))
 done
 
 START_TIME="$SECONDS"
