@@ -13,6 +13,4 @@ brew_install_formula watchman
 brew_install_formula cocoapods
 
 log "✓ Mobile development tools installed"
-log ""
-log "NOTE: Expo/EAS CLI are managed via Node (eas-cli in default-packages)."
-log "      Use 'npx expo' to run Expo commands (no global install needed)."
+log "NOTE: Expo/EAS CLI are managed via Node (eas-cli in default-packages). Use 'npx expo' to run Expo commands."

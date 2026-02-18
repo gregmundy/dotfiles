@@ -13,6 +13,4 @@ else
   log "✓ OpenTofu installed (restart terminal to use)"
 fi
 
-log "NOTE: OpenTofu is a drop-in replacement for Terraform."
-log "  Use 'tofu' wherever you'd use 'terraform'."
-log "  Alias 'terraform=tofu' is available in your shell."
+log "NOTE: OpenTofu is a drop-in replacement for Terraform. Use 'tofu' or the 'terraform' alias."

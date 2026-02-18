@@ -46,16 +46,6 @@ else
 fi
 
 log "✓ SSH config installed"
-log ""
-log "NOTE: 1Password SSH agent requires manual setup in the app:"
-log "  1. Open 1Password → Settings → Developer"
-log "  2. Enable 'Use the SSH Agent'"
-log "  3. Enable 'Integrate with 1Password CLI'"
-log ""
-log "NOTE: To enable git commit signing with 1Password:"
-log "  1. Complete the SSH agent setup above"
-log "  2. Add your signing key to ~/.gitconfig.local:"
-log "     [user]"
-log "         signingkey = ssh-ed25519 AAAA...  # your public key from 1Password"
-log "     [commit]"
-log "         gpgsign = true"
+
+log "NOTE: 1Password SSH agent: Open 1Password → Settings → Developer → Enable 'Use the SSH Agent' and 'Integrate with 1Password CLI'"
+log "NOTE: Git commit signing: Add to ~/.gitconfig.local: [user] signingkey = ssh-ed25519 AAAA... [commit] gpgsign = true"

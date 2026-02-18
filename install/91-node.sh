@@ -100,8 +100,7 @@ if command -v nvm &>/dev/null; then
   corepack enable 2>/dev/null || true
   log "✓ Corepack enabled (yarn/pnpm managed natively)"
 else
-  log "NOTE: nvm not available in current shell"
-  log "      Restart terminal and run: nvm install --lts && nvm alias default 'lts/*'"
+  log "NOTE: nvm not available in current shell — restart terminal and run: nvm install --lts && nvm alias default 'lts/*'"
 fi
 
 log "✓ nvm setup complete"

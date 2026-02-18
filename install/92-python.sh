@@ -25,11 +25,3 @@ for version in 3.12 3.13; do
 done
 
 log "✓ Python/uv setup complete"
-log ""
-log "Usage:"
-log "  uv python install 3.11      # Install a specific version"
-log "  uv python list              # List available versions"
-log "  uv venv                     # Create virtualenv in current dir"
-log "  uv pip install <pkg>        # Install packages (in venv)"
-log "  uv run python script.py     # Run with auto-created venv"
-log "  uv init                     # Initialize a new project"

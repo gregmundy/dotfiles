@@ -14,10 +14,3 @@ else
   log "✓ Go installed (restart terminal to use)"
 fi
 
-log ""
-log "Usage:"
-log "  go mod init myproject   # Initialize a new module"
-log "  go run main.go          # Run a program"
-log "  go build                # Compile"
-log "  go get <pkg>            # Add dependency"
-log "  go install <pkg>@latest # Install a tool globally"
