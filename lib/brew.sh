@@ -52,7 +52,10 @@ brew_install_cask() {
   if brew_has_cask "$name"; then
     ui_skip "$name"
   else
-    ui_spin_download "Downloading $name..." brew install --cask "$name"
+    # No spinner — some casks prompt for sudo (e.g. Zoom, 1Password)
+    # and gum spin swallows the password prompt
+    ui_step "Installing $name..."
+    brew install --cask "$name"
     ui_success "$name"
   fi
 }
