@@ -21,23 +21,30 @@ This runs all installer scripts in `install/` in numeric order (00-*, 05-*, 10-*
 - `setup.sh` - Main entry point that sources all installers in order
 - `install/` - Numbered installer scripts (XX-name.sh) run sequentially
 - `lib/` - Shared helper functions sourced by installers
+- `dotfiles/` - Config files deployed to `$HOME` by installers
+- `templates/` - Reference templates (e.g. `docker-compose/`) not auto-deployed
 
 ### Library Functions (lib/)
 
-**bootstrap.sh** - Standard bootstrap for installers. Sources all other libs and provides `log()`. Installer scripts should source this first:
+**bootstrap.sh** - Standard bootstrap for installers. Sources `ui.sh`, `brew.sh`, `fs.sh`, `xcodes.sh` and defines `log()`, which dispatches messages to the right `ui_*` helper based on prefix (`✓`, `ERROR:`, `NOTE:`). Installer scripts should source this first:
 ```bash
 source "$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)/lib/bootstrap.sh"
 ```
 
+**ui.sh** - Gum-powered UI helpers (falls back to plain text if `gum` is missing). Provides section headers, step/success/skip/error styling, spinners (`ui_spin`, `ui_spin_download`, `ui_spin_config`, `ui_spin_build`), styled input (`ui_input`), deferred post-install notes (`ui_defer_note` + `ui_show_notes`), and the welcome/completion banners. `log()` routes through these — call `ui_*` directly only when you need styling `log()` doesn't cover.
+
 **brew.sh** - Homebrew helpers:
 - `brew_ensure` - Install Homebrew if missing
 - `brew_install_formula <name>` - Install formula (idempotent)
-- `brew_install_cask <name>` - Install cask (idempotent)
+- `brew_install_cask <name>` - Install cask (idempotent, no spinner so sudo prompts aren't swallowed)
 
 **fs.sh** - Filesystem helpers:
 - `ensure_dir <path>` - Create directory if missing
 
 **xcodes.sh** - Xcode management via xcodes CLI
+
+**apps.sh** - App bundle helpers:
+- `app_installed <Name>` - True if `Name.app` exists in `/Applications` or `~/Applications`
 
 ### Installer Naming Convention
 
@@ -50,6 +57,7 @@ Scripts are prefixed with numbers to control execution order:
 - 50-59: Browsers
 - 60-69: Productivity (apps, AI tools)
 - 70-79: Dev tools (Docker, IDEs, API tools, database clients)
+- 80-89: Mobile development (Watchman, CocoaPods)
 - 90-99: Language runtimes (Elixir/Erlang, Node, Python, Go, Rust, Java, OpenTofu)
 
 ### Writing New Installers
