@@ -70,6 +70,7 @@ dotfiles/
 ├── nvim/            # Neovim configuration (init.lua)
 ├── nvm/             # Default npm packages for new Node versions
 ├── ssh/             # SSH config (1Password agent)
+├── starship/        # Starship prompt config (Gruvbox Dark)
 ├── vim/             # Vim configuration (.vimrc)
 ├── vscode/          # VS Code settings and keybindings
 └── zsh/             # Aliases, functions, PATH additions

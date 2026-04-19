@@ -1,0 +1,123 @@
+# Starship prompt — Gruvbox Dark
+#
+# Two-line prompt: info line on top (dir, git, languages, duration),
+# bare "❯" on the line below so long paths don't crowd the input.
+#
+# Language modules only render when starship detects a relevant project
+# file (package.json, pyproject.toml, mix.exs, go.mod, etc.), so plain
+# dirs stay quiet. Symbols use JetBrains Mono Nerd Font (installed by
+# install/06-cli-tools.sh).
+
+add_newline = false
+
+format = """
+$directory\
+$git_branch\
+$git_status\
+$elixir\
+$nodejs\
+$python\
+$golang\
+$rust\
+$java\
+$terraform\
+$cmd_duration\
+$line_break\
+$character"""
+
+[character]
+success_symbol = "[❯](bold #b8bb26)"
+error_symbol = "[❯](bold #fb4934)"
+vimcmd_symbol = "[❮](bold #b8bb26)"
+
+[directory]
+style = "bold #fabd2f"
+truncation_length = 3
+truncation_symbol = "…/"
+read_only = " 󰌾"
+read_only_style = "#fb4934"
+
+[git_branch]
+format = "[ $symbol$branch]($style) "
+symbol = " "
+style = "bold #b8bb26"
+
+[git_status]
+format = '([\[$all_status$ahead_behind\]]($style) )'
+style = "bold #fb4934"
+conflicted = "="
+ahead = "⇡${count}"
+behind = "⇣${count}"
+diverged = "⇕⇡${ahead_count}⇣${behind_count}"
+up_to_date = ""
+untracked = "?${count}"
+stashed = "\\$"
+modified = "!${count}"
+staged = "+${count}"
+renamed = "»${count}"
+deleted = "✘${count}"
+
+[cmd_duration]
+min_time = 2_000
+format = "[ ⏱ $duration]($style)"
+style = "bold #fabd2f"
+
+# ── Language modules (render only on relevant projects) ──────────────
+
+[elixir]
+format = "[ $symbol$version \\(OTP $otp_version\\)]($style)"
+symbol = " "
+style = "#d3869b"
+
+[nodejs]
+format = "[ $symbol$version]($style)"
+symbol = " "
+style = "#d3869b"
+detect_files = ["package.json", ".nvmrc", ".node-version"]
+
+[python]
+format = '[ $symbol${pyenv_prefix}${version}( \($virtualenv\))]($style)'
+symbol = " "
+style = "#d3869b"
+
+[golang]
+format = "[ $symbol$version]($style)"
+symbol = " "
+style = "#d3869b"
+
+[rust]
+format = "[ $symbol$version]($style)"
+symbol = " "
+style = "#d3869b"
+
+[java]
+format = "[ $symbol$version]($style)"
+symbol = " "
+style = "#d3869b"
+
+[terraform]
+format = "[ $symbol$workspace]($style)"
+symbol = " "
+style = "#d3869b"
+
+# ── Modules explicitly disabled ──────────────────────────────────────
+# Turn these off to keep the prompt tight; re-enable if you start using
+# the relevant tooling regularly.
+
+[aws]
+disabled = true
+
+[gcloud]
+disabled = true
+
+[kubernetes]
+disabled = true
+
+[battery]
+disabled = true
+
+[time]
+disabled = true
+
+[package]
+disabled = true
