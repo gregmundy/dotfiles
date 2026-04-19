@@ -38,7 +38,7 @@ export DOTFILES_ZSH_LOADED=1"
 if [[ -f "${LOADER_FILE}" ]] && grep -Fq "dotfiles/zsh" "${LOADER_FILE}"; then
   log "✓ OMZ custom loader already installed"
 else
-  mkdir -p "${OMZ_CUSTOM}"
+  ensure_dir "${OMZ_CUSTOM}"
   echo "${LOADER_CONTENT}" > "${LOADER_FILE}"
   log "✓ Installed OMZ custom loader: ${LOADER_FILE}"
 fi

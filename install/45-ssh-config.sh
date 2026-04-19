@@ -15,12 +15,8 @@ SSH_DIR="${HOME}/.ssh"
 SRC_CONFIG="${REPO_ROOT}/dotfiles/ssh/config"
 DEST_CONFIG="${SSH_DIR}/config"
 
-# Ensure .ssh directory exists with correct permissions
-if [[ ! -d "${SSH_DIR}" ]]; then
-  mkdir -p "${SSH_DIR}"
-  chmod 700 "${SSH_DIR}"
-  log "✓ Created ${SSH_DIR}"
-fi
+ensure_dir "${SSH_DIR}"
+chmod 700 "${SSH_DIR}"
 
 # Deploy SSH config
 if [[ ! -f "${SRC_CONFIG}" ]]; then

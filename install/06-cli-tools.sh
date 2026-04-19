@@ -24,6 +24,7 @@ brew_install_formula btop
 
 # Code formatting/linting
 brew_install_formula biome
+brew_install_formula shellcheck
 
 # Git TUI
 brew_install_formula lazygit

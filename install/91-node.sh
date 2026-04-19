@@ -11,8 +11,16 @@ log "Installing nvm..."
 
 # Install nvm if not present
 if [[ ! -d "${NVM_DIR}" ]]; then
-  # Fetch latest nvm release tag from GitHub
-  NVM_LATEST="$(curl -fsSL https://api.github.com/repos/nvm-sh/nvm/releases/latest | jq -r '.tag_name')"
+  # Resolve latest nvm tag. Try git ls-remote first (no rate limit), fall back
+  # to the GitHub API (rate-limited to 60 req/hr unauthenticated).
+  NVM_LATEST="$(git ls-remote --tags --refs --sort='version:refname' \
+    https://github.com/nvm-sh/nvm.git 'v*' 2>/dev/null \
+    | awk -F/ '{print $NF}' | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' | tail -n 1 || true)"
+
+  if [[ -z "${NVM_LATEST}" ]]; then
+    NVM_LATEST="$(curl -fsSL https://api.github.com/repos/nvm-sh/nvm/releases/latest | jq -r '.tag_name')"
+  fi
+
   if [[ -z "${NVM_LATEST}" || "${NVM_LATEST}" == "null" ]]; then
     log "ERROR: Could not determine latest nvm version"
     return 1

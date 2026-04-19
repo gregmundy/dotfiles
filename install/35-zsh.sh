@@ -156,7 +156,7 @@ else
 fi
 
 log "Installing zsh plugins (if needed)..."
-mkdir -p "$ZSH_PLUGINS_DIR"
+ensure_dir "$ZSH_PLUGINS_DIR"
 
 if [[ -d "${ZSH_PLUGINS_DIR}/zsh-autosuggestions" ]]; then
   log "✓ zsh-autosuggestions already installed"

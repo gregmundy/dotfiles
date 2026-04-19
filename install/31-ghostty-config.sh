@@ -16,8 +16,7 @@ if [[ ! -f "${SRC}" ]]; then
   return 1
 fi
 
-# Ensure destination directory exists
-mkdir -p "${DEST_DIR}"
+ensure_dir "${DEST_DIR}"
 
 # Backup existing config if it exists and differs
 if [[ -f "${DEST}" ]]; then
