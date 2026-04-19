@@ -6,10 +6,23 @@ alias ~="cd ~"
 alias -- -="cd -"
 
 # List files
+# Plain `ls` stays BSD for pipeline/script compatibility.
+# LSCOLORS: swap default red exec (bx) for bold green (Cx) — readable on dark.
+export LSCOLORS="ExFxGxDxCxegedabagacad"
 alias ls="ls -G"
-alias ll="ls -lah"
-alias la="ls -la"
-alias l="ls -CF"
+
+# Long/hidden views use eza (icons + git status + dir-first sort).
+# Falls back to ls if eza is missing.
+if command -v eza &>/dev/null; then
+  alias ll="eza -lh --icons --git --group-directories-first"
+  alias la="eza -lah --icons --git --group-directories-first"
+  alias l="eza --icons --group-directories-first"
+  alias lt="eza --tree --icons --level=2 --group-directories-first"
+else
+  alias ll="ls -lah"
+  alias la="ls -la"
+  alias l="ls -CF"
+fi
 
 # Safety
 alias rm="rm -i"
