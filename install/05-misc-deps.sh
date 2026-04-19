@@ -9,6 +9,7 @@ brew_install_formula gum
 brew_install_formula jq
 brew_install_formula aria2
 brew_install_formula autoconf
+brew_install_formula cmake
 brew_install_formula openssl
 brew_install_formula wxwidgets
 brew_install_formula libxslt
