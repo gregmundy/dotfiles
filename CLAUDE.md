@@ -56,7 +56,7 @@ Scripts are prefixed with numbers to control execution order:
 - 40-49: Window management (Rectangle), git config, SSH
 - 50-59: Browsers
 - 60-69: Productivity (apps, AI tools)
-- 70-79: Dev tools (Docker, IDEs, API tools, database clients)
+- 70-79: Dev tools (Docker, IDEs, API tools, Claude Code config, database clients)
 - 80-89: Mobile development (Watchman, CocoaPods)
 - 90-99: Language runtimes (Elixir/Erlang, Node, Python, Go, Rust, Java, OpenTofu)
 

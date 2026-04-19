@@ -69,6 +69,7 @@ dotfiles/
 ├── git/             # gitconfig, gitignore_global
 ├── nvim/            # Neovim configuration (init.lua)
 ├── nvm/             # Default npm packages for new Node versions
+├── claude/          # Global Claude Code settings (plugins + allows)
 ├── ssh/             # SSH config (1Password agent)
 ├── starship/        # Starship prompt config (Gruvbox Dark)
 ├── vim/             # Vim configuration (.vimrc)

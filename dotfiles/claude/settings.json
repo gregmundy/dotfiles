@@ -1,0 +1,96 @@
+{
+  "enabledPlugins": {
+    "frontend-design@claude-plugins-official": true,
+    "superpowers@claude-plugins-official": true,
+    "claude-md-management@claude-plugins-official": true,
+    "typescript-lsp@claude-plugins-official": true
+  },
+  "permissions": {
+    "allow": [
+      "WebSearch",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "WebFetch(domain:api.github.com)",
+      "WebFetch(domain:docs.claude.com)",
+      "WebFetch(domain:code.claude.com)",
+      "WebFetch(domain:developer.mozilla.org)",
+
+      "Bash(ls:*)",
+      "Bash(tree:*)",
+      "Bash(find:*)",
+      "Bash(file:*)",
+      "Bash(stat:*)",
+      "Bash(wc:*)",
+
+      "Bash(echo:*)",
+      "Bash(which:*)",
+      "Bash(type:*)",
+      "Bash(source:*)",
+      "Bash(bash -n:*)",
+
+      "Bash(git status:*)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Bash(git show:*)",
+      "Bash(git branch:*)",
+      "Bash(git remote:*)",
+      "Bash(git config --get:*)",
+      "Bash(git ls-files:*)",
+      "Bash(git blame:*)",
+
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git mv:*)",
+      "Bash(git rm:*)",
+      "Bash(git stash:*)",
+      "Bash(git switch:*)",
+      "Bash(git checkout:*)",
+      "Bash(git restore:*)",
+      "Bash(git merge:*)",
+
+      "Bash(brew search:*)",
+      "Bash(brew info:*)",
+      "Bash(brew list:*)",
+
+      "Bash(npm run:*)",
+      "Bash(npm test:*)",
+      "Bash(npm install:*)",
+      "Bash(pnpm run:*)",
+      "Bash(pnpm test:*)",
+      "Bash(pnpm install:*)",
+
+      "Bash(uv run:*)",
+      "Bash(uv sync:*)",
+      "Bash(uv pip:*)",
+
+      "Bash(mix:*)",
+
+      "Bash(go test:*)",
+      "Bash(go build:*)",
+      "Bash(go run:*)",
+      "Bash(go mod:*)",
+      "Bash(go fmt:*)",
+      "Bash(go vet:*)",
+
+      "Bash(cargo build:*)",
+      "Bash(cargo test:*)",
+      "Bash(cargo run:*)",
+      "Bash(cargo check:*)",
+      "Bash(cargo clippy:*)",
+      "Bash(cargo fmt:*)",
+
+      "Bash(tofu:*)",
+
+      "Bash(defaults read:*)",
+
+      "Bash(mas search:*)",
+      "Bash(mas list:*)",
+
+      "Bash(gh pr view:*)",
+      "Bash(gh pr list:*)",
+      "Bash(gh issue view:*)",
+      "Bash(gh issue list:*)",
+      "Bash(gh api:*)"
+    ]
+  }
+}
