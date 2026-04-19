@@ -27,7 +27,7 @@ $character"""
 
 [character]
 success_symbol = "[❯](bold #b8bb26)"
-error_symbol = "[❯](bold #fb4934)"
+error_symbol = "[❯](bold #fe8019)"
 vimcmd_symbol = "[❮](bold #b8bb26)"
 
 [directory]
@@ -35,7 +35,7 @@ style = "bold #fabd2f"
 truncation_length = 3
 truncation_symbol = "…/"
 read_only = " 󰌾"
-read_only_style = "#fb4934"
+read_only_style = "#fe8019"
 
 [git_branch]
 format = "[ $symbol$branch]($style) "
@@ -44,7 +44,7 @@ style = "bold #b8bb26"
 
 [git_status]
 format = '([\[$all_status$ahead_behind\]]($style) )'
-style = "bold #fb4934"
+style = "bold #fe8019"
 conflicted = "="
 ahead = "⇡${count}"
 behind = "⇣${count}"
