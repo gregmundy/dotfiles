@@ -98,5 +98,5 @@ asdf reshim erlang
 asdf reshim elixir
 
 log "✓ Erlang/Elixir installed and configured"
-log "   Erlang OTP release: $(erl -eval 'io:format("~s",[erlang:system_info(otp_release)]), halt().' -noshell 2>/dev/null || echo '(not on PATH yet)')"
-log "   Elixir: $(elixir -v 2>/dev/null | head -n 1 || echo '(not on PATH yet)')"
+log "   Erlang: ${LATEST_ERLANG}"
+log "   Elixir: ${LATEST_ELIXIR}"
