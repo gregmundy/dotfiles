@@ -9,12 +9,7 @@ log "Installing VS Code configs..."
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 VSCODE_USER_DIR="${HOME}/Library/Application Support/Code/User"
 
-# Ensure VS Code user directory exists
-if [[ ! -d "${VSCODE_USER_DIR}" ]]; then
-  log "VS Code user directory not found. Is VS Code installed?"
-  log "Creating directory: ${VSCODE_USER_DIR}"
-  mkdir -p "${VSCODE_USER_DIR}"
-fi
+ensure_dir "${VSCODE_USER_DIR}"
 
 # Deploy settings.json
 SRC_SETTINGS="${REPO_ROOT}/dotfiles/vscode/settings.json"
@@ -55,27 +50,6 @@ if [[ -f "${SRC_KEYS}" ]]; then
   else
     cp -a "${SRC_KEYS}" "${DEST_KEYS}"
     log "✓ Installed VS Code keybindings.json"
-  fi
-fi
-
-# Deploy global editorconfig
-SRC_EDITOR="${REPO_ROOT}/dotfiles/editorconfig"
-DEST_EDITOR="${HOME}/.editorconfig"
-
-if [[ -f "${SRC_EDITOR}" ]]; then
-  if [[ -f "${DEST_EDITOR}" ]]; then
-    if cmp -s "${SRC_EDITOR}" "${DEST_EDITOR}"; then
-      log "✓ .editorconfig already up to date"
-    else
-      TS="$(date +"%Y%m%d-%H%M%S")"
-      cp -a "${DEST_EDITOR}" "${DEST_EDITOR}.bak.${TS}"
-      log "Backed up existing .editorconfig"
-      cp -a "${SRC_EDITOR}" "${DEST_EDITOR}"
-      log "✓ Installed ${DEST_EDITOR}"
-    fi
-  else
-    cp -a "${SRC_EDITOR}" "${DEST_EDITOR}"
-    log "✓ Installed ${DEST_EDITOR}"
   fi
 fi
 
