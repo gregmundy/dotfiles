@@ -7,13 +7,9 @@ source "$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)/lib/bootstrap.sh"
 log "Installing asdf version manager..."
 brew_install_formula asdf
 
-# Make `asdf` available in THIS script process (install scripts run in their own process)
-ASDF_SH="$(brew --prefix asdf)/libexec/asdf.sh"
-if [[ -f "${ASDF_SH}" ]]; then
-  # shellcheck source=/dev/null
-  . "${ASDF_SH}"
-else
-  log "ERROR: asdf init script not found at ${ASDF_SH}"
+# asdf v0.16+ is a Go binary — no shell init script to source, just verify it's on PATH
+if ! command -v asdf >/dev/null 2>&1; then
+  log "ERROR: asdf not found on PATH after brew install"
   return 1
 fi
 
