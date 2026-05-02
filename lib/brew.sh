@@ -55,7 +55,9 @@ brew_install_cask() {
     # No spinner — some casks prompt for sudo (e.g. Zoom, 1Password)
     # and gum spin swallows the password prompt
     ui_step "Installing $name..."
-    brew install --cask "$name"
+    # --adopt takes over an existing app bundle at the target path
+    # (e.g. manually-installed LM Studio) instead of erroring
+    brew install --cask --adopt "$name"
     ui_success "$name"
   fi
 }
