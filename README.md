@@ -8,13 +8,19 @@ This repo is what gets me from a freshly-wiped Mac to my actual working environm
 
 Clone or download the repo and run `./setup.sh` on a clean install. The whole thing is idempotent and you can re-run it anytime to update or restore.
 
+```bash
+git clone https://github.com/gregmundy/dotfiles.git /path/to/dotfiles
+cd /path/to/dotfiles
+./setup.sh
+```
+
 ![Dotfiles CLI](docs/screenshot.png)
 
 ---
 
-## What's Included
+## What's included
 
-### Development Tools
+### Development tools
 
 | Category | Tools |
 |----------|-------|
@@ -27,21 +33,18 @@ Clone or download the repo and run `./setup.sh` on a clean install. The whole th
 | **Version Control** | Git, Git LFS, GitHub CLI |
 | **Linting / Formatting** | Biome, ShellCheck |
 
-### CLI Tools
+### CLI tools
 
-```
-jq        JSON processor           fzf       Fuzzy finder
-yq        YAML processor           ripgrep   Fast grep
-bat       Better cat               eza       Modern ls
-gh        GitHub CLI               btop      System monitor
-lazygit   Git TUI                  lazydocker Docker TUI
-zoxide    Smarter cd               tldr      Simplified man pages
-httpie    HTTP client              delta     Better git diffs
-jless     JSON viewer              tmux      Terminal multiplexer
-direnv    Per-dir env vars         asdf      Version manager
-aria2     Download utility         gum       Shell UI toolkit
-mas       Mac App Store CLI
-```
+| Category | Tools |
+|----------|-------|
+| **Search & Navigation** | ripgrep, fzf, zoxide, eza |
+| **Viewers** | bat, jless, tldr |
+| **Data Wrangling** | jq, yq, httpie |
+| **Git & GitHub** | gh, lazygit, delta |
+| **System & Containers** | btop, lazydocker |
+| **Shell & Sessions** | tmux, direnv, gum |
+| **Version & Package** | asdf, mas |
+| **Downloads** | aria2 |
 
 ### Applications
 
@@ -55,7 +58,7 @@ mas       Mac App Store CLI
 | **Security** | 1Password, 1Password CLI |
 | **Entertainment** | Steam |
 
-### System Configuration
+### System configuration
 
 - **Terminal**: Ghostty with Gruvbox Dark theme, JetBrains Mono Nerd Font
 - **Shell**: Zsh with Oh My Zsh, Starship prompt, custom aliases and functions
@@ -66,7 +69,7 @@ mas       Mac App Store CLI
 
 ---
 
-## Dotfiles Managed
+## Dotfiles managed
 
 ```
 dotfiles/
@@ -84,9 +87,41 @@ dotfiles/
 
 ---
 
+## On the choices
+
+This is an opinionated setup. The tools here aren't a survey of what's available — they're what I've landed on after years of swapping things in and out. If you fork this, expect to disagree with at least a third of the choices.
+
+A few of the picks worth defending:
+
+**Ghostty over iTerm2.** I used iTerm2 for many years and Ghostty made the switch worth it. The config is plain text, the speed is unreal on Apple Silicon, and the defaults are saner than iTerm's accumulated complexity.
+
+**Raycast over Spotlight, Alfred, and LaunchBar.** They're all solving the same problem. Raycast just got there cleanest, and the extension ecosystem means I can stop building my own scripts for things other people have already built well.
+
+**uv over pip, pipenv, and poetry.** uv won. The other tools haven't fully realized it yet. Speed alone justifies it; the lock file format and resolver are a bonus.
+
+**Starship over Oh My Zsh themes.** I want my prompt to be fast and config-driven, not a community Frankenstein I have to debug when something breaks. Starship is one TOML file and it works.
+
+**Neovim *and* VS Code, not one or the other.** I keep trying to commit to one and keep coming back to using both. Neovim for terminal-context work and quick edits, VS Code (and increasingly Cursor) for longer sessions and anything visual. I've stopped trying to pick.
+
+**Local AI tools alongside cloud ones.** LM Studio and Ollama for local inference, Claude and ChatGPT for frontier work. The setup reflects how I actually use AI — local by default for the things that should stay local, cloud when the capability earns it.
+
+---
+
+## Why shell scripts and not Nix?
+
+This is a totally fair question, especially in 2026. I considered Nix seriously and decided against it for this specific job.
+
+Nix's promise — fully declarative, reproducible, atomic — is real, and the people who get over the learning curve genuinely love it. The trade-off is that everything you do has to go through Nix's abstractions, and the curve is steep enough that I lose the property I actually care most about: *being able to read every line of my setup and know exactly what it does*. Shell scripts are transparent. If something breaks during setup, I can read the script that broke and fix it without consulting documentation.
+
+I also looked at Ansible (heavier than I want for personal use), chezmoi (well-designed for templated multi-machine configs, but my setup is uniform across machines), and dotbot (too thin for what I needed). Plain shell scripts plus Homebrew Bundle hits the sweet spot of *enough automation, no abstractions I don't understand*.
+
+If you're already happy with Nix, you should keep using Nix. This isn't an argument against it — it's a different set of priorities.
+
+---
+
 ## Architecture
 
-### Installer Scripts
+### Installer scripts
 
 Scripts in `install/` run in numeric order:
 
@@ -103,7 +138,7 @@ Scripts in `install/` run in numeric order:
 | `80-89` | Mobile development (Watchman, CocoaPods) |
 | `90-99` | Language runtimes |
 
-### Library Functions
+### Library functions
 
 Helper functions in `lib/` are sourced by installers:
 
@@ -114,24 +149,24 @@ Helper functions in `lib/` are sourced by installers:
 
 ---
 
-## Post-Install Setup
+## Post-install setup
 
 Some tools require manual configuration after install:
 
-### 1Password SSH Agent
+### 1Password SSH agent
 Enable in 1Password: **Settings → Developer → SSH Agent**
 
-### Git Identity
+### Git identity
 The installer prompts for your name and email, stored in `~/.gitconfig.local` (not committed).
 
-### App Store Apps
+### App Store apps
 Sign into the App Store before running setup. The installer uses `mas` to install Apple Developer and TestFlight.
 
 ---
 
 ## Customization
 
-### Adding a New Installer
+### Adding a new installer
 
 1. Create `install/XX-name.sh` with appropriate number prefix
 2. Add standard header:
@@ -144,7 +179,7 @@ Sign into the App Store before running setup. The installer uses `mas` to instal
 4. Use `brew_install_formula` or `brew_install_cask`
 5. Make idempotent (check before installing)
 
-### Adding Dotfiles
+### Adding dotfiles
 
 1. Add config files to `dotfiles/appname/`
 2. Create an installer to symlink or copy them
