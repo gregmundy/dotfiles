@@ -10,6 +10,10 @@
 
 add_newline = false
 
+# asdf shims (notably elixir) cold-boot the BEAM just to print a version,
+# which blows past starship's 500ms default and triggers timeout warnings.
+command_timeout = 2000
+
 format = """
 $directory\
 $git_branch\
