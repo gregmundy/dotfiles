@@ -18,12 +18,14 @@ Clone or download the repo and run `./setup.sh` on a clean install. The whole th
 
 | Category | Tools |
 |----------|-------|
-| **Languages** | Node.js (nvm), Python (uv), Go, Elixir/Erlang, Rust, Java, OpenTofu |
-| **Editors** | VS Code, Neovim, Vim |
+| **Languages** | Node.js (nvm), Python (uv), Go, Elixir/Erlang (asdf), Rust (rustup), Java (Temurin), OpenTofu |
+| **Editors / IDEs** | VS Code, Cursor, PyCharm, Neovim, Vim |
 | **Containers** | Docker |
-| **API Testing** | Postman, Insomnia |
+| **API Testing** | Postman, Insomnia, HTTPie |
 | **Database** | DBeaver, NoSQLBooster, MongoDB Atlas CLI, RedisInsight |
+| **Mobile** | Watchman, CocoaPods |
 | **Version Control** | Git, Git LFS, GitHub CLI |
+| **Linting / Formatting** | Biome, ShellCheck |
 
 ### CLI Tools
 
@@ -36,6 +38,9 @@ lazygit   Git TUI                  lazydocker Docker TUI
 zoxide    Smarter cd               tldr      Simplified man pages
 httpie    HTTP client              delta     Better git diffs
 jless     JSON viewer              tmux      Terminal multiplexer
+direnv    Per-dir env vars         asdf      Version manager
+aria2     Download utility         gum       Shell UI toolkit
+mas       Mac App Store CLI
 ```
 
 ### Applications
@@ -45,16 +50,18 @@ jless     JSON viewer              tmux      Terminal multiplexer
 | **Productivity** | Raycast, Obsidian, Notion, Todoist, Linear, Figma, AppCleaner |
 | **Communication** | Slack, Discord, Zoom |
 | **Browsers** | Chrome, DuckDuckGo |
-| **AI** | Claude, ChatGPT, Cursor |
+| **AI** | Claude, ChatGPT, Cursor, Cursor CLI, opencode, LM Studio, Ollama |
 | **Media** | Spotify |
 | **Security** | 1Password, 1Password CLI |
 | **Entertainment** | Steam |
 
 ### System Configuration
 
-- **Terminal**: Ghostty with Gruvbox Dark theme
+- **Terminal**: Ghostty with Gruvbox Dark theme, JetBrains Mono Nerd Font
 - **Shell**: Zsh with Oh My Zsh, Starship prompt, custom aliases and functions
+- **Multiplexer**: tmux
 - **Window Manager**: Rectangle
+- **App Store**: `mas` for installing Apple Developer and TestFlight
 - **macOS Defaults**: Optimized Finder, Dock, keyboard settings
 
 ---
@@ -93,7 +100,8 @@ Scripts in `install/` run in numeric order:
 | `50-59` | Browsers |
 | `60-69` | Productivity & communication |
 | `70-79` | Dev tools (Docker, IDEs, databases) |
-| `90-99` | Language runtimes & mobile dev |
+| `80-89` | Mobile development (Watchman, CocoaPods) |
+| `90-99` | Language runtimes |
 
 ### Library Functions
 

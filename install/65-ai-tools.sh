@@ -16,5 +16,16 @@ brew_install_cask chatgpt
 ###############################################################################
 brew_install_cask claude
 
+###############################################################################
+# LM Studio - GUI for running local LLMs
+###############################################################################
+brew_install_cask lm-studio
+
+###############################################################################
+# Ollama - local LLM runtime / API
+###############################################################################
+brew_install_formula ollama
+
 log "✓ AI tools installed"
 log "NOTE: Open ChatGPT and Claude once to sign in."
+log "NOTE: Start the Ollama daemon with 'ollama serve' (or run the LM Studio app)."
