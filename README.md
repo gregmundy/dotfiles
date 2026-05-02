@@ -1,16 +1,14 @@
 # macOS Dotfiles
 
-A comprehensive macOS machine bootstrap and dotfiles manager. Run one command to set up a new Mac with all preferred applications, development tools, and configurations.
+> A reproducible macOS setup for people who like to factory-reset their machines
 
-## Quick Start
+I factory-reset my Macs more than most people. Some of that's practical — I work across multiple laptops and a desktop and a reproducible setup is the only way to stay sane. Some of it's just preference. I like the new-car-smell of a clean install, and resetting periodically forces me to keep my tooling honest: if I can't easily reinstall something, I probably don't need it.
 
-```bash
-git clone https://github.com/yourusername/dotfiles.git ~/Development/dotfiles
-cd ~/Development/dotfiles
-./setup.sh
-```
+This repo is what gets me from a freshly-wiped Mac to my actual working environment in ~30 minutes, with maybe 2% manual intervention at the end (logging into iCloud, 1Password, the App Store).
 
-The setup is fully idempotent—run it again anytime to update or restore your configuration. Some steps (Xcode, App Store apps) may prompt for your sudo password.
+Clone or download the repo and run `./setup.sh` on a clean install. The whole thing is idempotent and you can re-run it anytime to update or restore.
+
+![Dotfiles CLI](docs/screenshot.png)
 
 ---
 
