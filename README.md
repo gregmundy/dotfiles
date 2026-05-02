@@ -75,13 +75,15 @@ cd dotfiles
 
 ```
 dotfiles/
+├── claude/          # Global Claude Code settings (plugins + allows)
+├── editorconfig/    # Project-agnostic editor defaults
 ├── ghostty/         # Terminal emulator config
 ├── git/             # gitconfig, gitignore_global
 ├── nvim/            # Neovim configuration (init.lua)
 ├── nvm/             # Default npm packages for new Node versions
-├── claude/          # Global Claude Code settings (plugins + allows)
 ├── ssh/             # SSH config (1Password agent)
 ├── starship/        # Starship prompt config (Gruvbox Dark)
+├── tmux/            # tmux configuration
 ├── vim/             # Vim configuration (.vimrc)
 ├── vscode/          # VS Code settings and keybindings
 └── zsh/             # Aliases, functions, PATH additions
@@ -144,9 +146,11 @@ Scripts in `install/` run in numeric order:
 
 Helper functions in `lib/` are sourced by installers:
 
-- **bootstrap.sh** — Standard bootstrap, provides `log()` function
-- **brew.sh** — `brew_install_formula`, `brew_install_cask`
+- **bootstrap.sh** — Sources the other libs and provides the `log()` dispatcher
+- **ui.sh** — Gum-powered UI helpers (sections, spinners, deferred notes)
+- **brew.sh** — `brew_ensure`, `brew_install_formula`, `brew_install_cask`
 - **fs.sh** — `ensure_dir`
+- **apps.sh** — `app_installed` (checks `/Applications` and `~/Applications`)
 - **xcodes.sh** — Xcode version management
 
 ---
