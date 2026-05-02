@@ -141,9 +141,3 @@ Sign into the App Store before running setup. The installer uses `mas` to instal
 1. Add config files to `dotfiles/appname/`
 2. Create an installer to symlink or copy them
 3. Use `cmp -s` to check if files are already up to date
-
----
-
-## License
-
-MIT
