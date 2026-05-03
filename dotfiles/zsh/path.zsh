@@ -8,3 +8,6 @@ export PATH="${HOME}/go/bin:${PATH}"
 
 # Rust/Cargo binaries
 export PATH="${HOME}/.cargo/bin:${PATH}"
+
+# llamavm shims (per-version llama.cpp builds)
+export PATH="${HOME}/.llamavm/shims:${PATH}"

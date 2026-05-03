@@ -55,7 +55,7 @@ cd dotfiles
 | **Productivity** | Raycast, Obsidian, Notion, Todoist, Linear, Figma, AppCleaner |
 | **Communication** | Slack, Discord, Zoom |
 | **Browsers** | Chrome, DuckDuckGo |
-| **AI** | Claude, ChatGPT, Cursor, Cursor CLI, opencode, LM Studio, Ollama |
+| **AI** | Claude, ChatGPT, Cursor, Cursor CLI, opencode, LM Studio, Ollama, llamavm |
 | **Media** | Spotify |
 | **Security** | 1Password, 1Password CLI |
 | **Entertainment** | Steam |

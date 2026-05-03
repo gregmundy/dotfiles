@@ -26,5 +26,11 @@ brew_install_cask lm-studio
 ###############################################################################
 brew_install_cask ollama-app
 
+###############################################################################
+# llamavm - nvm-style version manager for source-built llama.cpp
+###############################################################################
+brew tap gregmundy/tap >/dev/null 2>&1 || true
+brew_install_cask llamavm
+
 log "✓ AI tools installed"
 log "NOTE: Open ChatGPT, Claude, Ollama, and LM Studio once to sign in / start daemons."
