@@ -7,10 +7,10 @@ source "$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)/lib/bootstrap.sh"
 log "Installing Rust via rustup..."
 brew_install_formula rustup
 
-RUSTUP="$(brew --prefix rustup)/bin/rustup-init"
+RUSTUP="$(brew --prefix rustup)/bin/rustup"
 
 if [[ ! -x "${RUSTUP}" ]]; then
-  log "ERROR: rustup-init not found at ${RUSTUP}"
+  log "ERROR: rustup not found at ${RUSTUP}"
   return 1
 fi
 
@@ -18,7 +18,7 @@ fi
 if [[ -d "${HOME}/.rustup/toolchains" ]] && ls "${HOME}/.rustup/toolchains" | grep -q stable; then
   log "✓ Rust stable toolchain already installed"
 else
-  "${RUSTUP}" -y --no-modify-path
+  "${RUSTUP}" default stable
   log "✓ Rust stable toolchain installed"
 fi
 
