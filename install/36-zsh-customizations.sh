@@ -35,33 +35,15 @@ for file in ${ZSH_CUSTOM_DIR}/*.zsh; do
 done
 export DOTFILES_ZSH_LOADED=1"
 
-if [[ -f "${LOADER_FILE}" ]] && grep -Fq "dotfiles/zsh" "${LOADER_FILE}"; then
+# Check the loader points to *this* repo, not a stale path from a prior
+# bootstrap (e.g. ~/Downloads/dotfiles-main) — those will glob to nothing
+# and noisily fail in every new shell.
+if [[ -f "${LOADER_FILE}" ]] && grep -Fq "${ZSH_CUSTOM_DIR}" "${LOADER_FILE}"; then
   log "✓ OMZ custom loader already installed"
 else
   ensure_dir "${OMZ_CUSTOM}"
   echo "${LOADER_CONTENT}" > "${LOADER_FILE}"
   log "✓ Installed OMZ custom loader: ${LOADER_FILE}"
-fi
-
-# --- Fallback: .zshrc source block ---
-# Belt-and-suspenders: if the OMZ custom directory is ever blown away
-# (e.g. full OMZ reinstall), this block in .zshrc still works.
-# Guards against double-sourcing when the OMZ loader is also active.
-SOURCE_BLOCK="# Custom aliases and functions (fallback if OMZ custom loader is missing)
-if [[ -z \"\${DOTFILES_ZSH_LOADED:-}\" ]]; then
-  for file in ${ZSH_CUSTOM_DIR}/*.zsh; do
-    [[ -f \"\$file\" ]] && source \"\$file\"
-  done
-fi"
-
-if grep -Fq "dotfiles/zsh" "${ZSHRC}"; then
-  log "✓ Zsh customizations already sourced in ${ZSHRC}"
-else
-  {
-    echo ""
-    echo "${SOURCE_BLOCK}"
-  } >> "${ZSHRC}"
-  log "✓ Added custom zsh sources to ${ZSHRC} (fallback)"
 fi
 
 log "✓ Zsh customizations installed"

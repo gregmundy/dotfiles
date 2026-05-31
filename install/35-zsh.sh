@@ -141,6 +141,36 @@ ensure_plugins_in_zshrc() {
   log "✓ Updated plugins in .zshrc"
 }
 
+# Restore .zshrc from the canonical baseline if it's missing the OMZ
+# bootstrap line (i.e. the file was deleted, truncated, or otherwise
+# stripped of the lines that make OMZ + nvm + custom loaders actually
+# work). Healthy .zshrc files are left alone so tool-added blocks
+# (Docker completions, LM Studio CLI, brew shellenv, etc.) survive.
+ensure_zshrc_baseline() {
+  local repo_root="$1"
+  local src="${repo_root}/dotfiles/zsh/zshrc"
+
+  if [[ ! -f "$src" ]]; then
+    log "ERROR: Missing canonical zshrc at ${src}"
+    return 1
+  fi
+
+  if [[ -f "$ZSHRC" ]] && grep -Fq 'source $ZSH/oh-my-zsh.sh' "$ZSHRC"; then
+    log "✓ .zshrc baseline looks healthy"
+    return 0
+  fi
+
+  if [[ -f "$ZSHRC" ]]; then
+    local ts
+    ts="$(date +"%Y%m%d-%H%M%S")"
+    cp -a "$ZSHRC" "${ZSHRC}.bak.${ts}"
+    log "Backed up broken .zshrc to ${ZSHRC}.bak.${ts}"
+  fi
+
+  cp -a "$src" "$ZSHRC"
+  log "✓ Restored .zshrc from canonical baseline"
+}
+
 # --- begin ----------------------------------------------------------------
 
 log "Checking login shell..."
@@ -154,6 +184,9 @@ else
     "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
   log "✓ oh-my-zsh installed"
 fi
+
+log "Ensuring .zshrc baseline..."
+ensure_zshrc_baseline "$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
 log "Installing zsh plugins (if needed)..."
 ensure_dir "$ZSH_PLUGINS_DIR"
