@@ -5,8 +5,8 @@
 #
 # Language modules only render when starship detects a relevant project
 # file (package.json, pyproject.toml, mix.exs, go.mod, etc.), so plain
-# dirs stay quiet. Symbols use JetBrains Mono Nerd Font (installed by
-# install/06-cli-tools.sh).
+# dirs stay quiet. Symbols use JetBrains Mono Nerd Font (installed via
+# the Brewfile).
 
 add_newline = false
 
