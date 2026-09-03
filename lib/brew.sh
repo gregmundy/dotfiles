@@ -83,6 +83,24 @@ brew_ensure_clt() {
   ui_success "Command Line Tools installed"
 }
 
+# Add a third-party tap and mark it trusted. Homebrew now refuses to load
+# formulae/casks from non-official taps until `brew trust --tap` has been run
+# (HOMEBREW_REQUIRE_TAP_TRUST defaults on), so a plain `brew tap` followed by
+# an install fails with "untrusted tap".
+brew_tap_trusted() {
+  local tap="$1"
+  if brew tap-info "$tap" 2>/dev/null | grep -q 'Not installed$'; then
+    ui_step "Tapping $tap..."
+    brew tap "$tap"
+  fi
+  if brew tap-info "$tap" 2>/dev/null | grep -qx 'Trusted'; then
+    ui_skip "$tap trusted"
+  else
+    brew trust --tap "$tap" >/dev/null
+    ui_success "$tap trusted"
+  fi
+}
+
 brew_install_cask() {
   local name="$1"
   if brew_has_cask "$name"; then

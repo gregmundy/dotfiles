@@ -43,7 +43,7 @@ brew_install_cask ollama-app
 # llamavm  - nvm-style version manager for source-built llama.cpp
 # llamactl - supervisor / model manager for llama.cpp servers
 ###############################################################################
-brew tap gregmundy/tap >/dev/null 2>&1 || true
+brew_tap_trusted gregmundy/tap
 brew_install_cask llamavm
 brew_install_cask llamactl
 

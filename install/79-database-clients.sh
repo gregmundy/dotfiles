@@ -21,7 +21,7 @@ brew_install_formula mongodb-atlas-cli
 brew_install_cask redis-insight
 
 # Supabase CLI (Postgres-backed BaaS) — lives in a third-party tap
-brew tap supabase/tap >/dev/null 2>&1 || true
+brew_tap_trusted supabase/tap
 brew_install_formula supabase/tap/supabase
 
 log "✓ Database clients installed"
