@@ -140,6 +140,33 @@ if [[ -t 0 ]]; then
   export SETUP_SUDO_CACHED=1
 fi
 
+# App Store preflight. Xcode, Developer, and TestFlight install through mas,
+# which needs an Apple Account signed in to App Store.app and offers no way to
+# check that from the command line. Ask once, up front, only when this run
+# includes those steps and the apps are actually missing.
+run_includes() {
+  local wanted="$1" f
+  for f in "${SCRIPTS[@]}"; do
+    [[ "$(basename "$f" .sh)" == "$wanted" ]] && return 0
+  done
+  return 1
+}
+app_store_apps_missing() {
+  local app have_xcode=0
+  for app in /Applications/Xcode.app /Applications/Xcode-*.app; do
+    [[ -d "$app" ]] && have_xcode=1
+  done
+  [[ "$have_xcode" == "0" || ! -d /Applications/Developer.app || ! -d /Applications/TestFlight.app ]]
+}
+if [[ -t 0 ]] && { run_includes 20-xcode || run_includes 26-apple-dev; } && app_store_apps_missing; then
+  ui_step "Xcode, Developer, and TestFlight install from the Mac App Store, which needs a signed-in Apple Account."
+  if ! ui_confirm "Are you signed in to App Store.app?"; then
+    open -a "App Store" 2>/dev/null || true
+    ui_step "App Store opened. Sign in, then press Enter to continue (or press Enter now to skip those apps)."
+    read -r _
+  fi
+fi
+
 # Installers are sourced under set -e, so any unhandled failure ends the whole
 # run. Report which installer and command did it instead of exiting silently.
 # (An EXIT trap, not ERR: ERR traps with errtrace also fire inside $(...)

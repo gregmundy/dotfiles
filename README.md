@@ -155,6 +155,13 @@ Helper functions in `lib/` are sourced by installers:
 
 ---
 
+## Before you run it
+
+1. **Sign in to App Store.app.** Xcode, the Apple Developer app, and TestFlight install through the App Store. Setup asks once at the start whether you're signed in and opens App Store if not; if you skip it, those apps are skipped with a note and you can run `./setup.sh xcode apple-dev` later.
+2. **Have your password ready.** Setup asks for it once at the start (twice on a machine with no Homebrew yet, because Homebrew's installer clears the sudo session).
+
+---
+
 ## Post-install setup
 
 Some tools require manual configuration after install:
