@@ -221,7 +221,7 @@ ui_spin() {
   local msg="$1"
   shift
   if _have_gum; then
-    gum spin \
+    gum spin --show-error \
       --spinner pulse \
       --spinner.foreground '#7C3AED' \
       --title " $msg" \
@@ -238,7 +238,7 @@ ui_spin_download() {
   local msg="$1"
   shift
   if _have_gum; then
-    gum spin \
+    gum spin --show-error \
       --spinner globe \
       --spinner.foreground '#60A5FA' \
       --title " ↓ $msg" \
@@ -255,7 +255,7 @@ ui_spin_config() {
   local msg="$1"
   shift
   if _have_gum; then
-    gum spin \
+    gum spin --show-error \
       --spinner dot \
       --spinner.foreground '#A78BFA' \
       --title " → $msg" \
@@ -272,7 +272,7 @@ ui_spin_build() {
   local msg="$1"
   shift
   if _have_gum; then
-    gum spin \
+    gum spin --show-error \
       --spinner meter \
       --spinner.foreground '#F59E0B' \
       --title " ⚙ $msg" \

@@ -9,6 +9,12 @@ source "${ROOT_DIR}/lib/ui.sh"
 
 INSTALL_DIR="${ROOT_DIR}/install"
 
+# Homebrew behaviour for the whole run. Installers are sourced, so these apply
+# to every brew call. 00-homebrew.sh performs the single `brew update`.
+export HOMEBREW_NO_AUTO_UPDATE=1   # don't re-run `brew update` before each install
+export HOMEBREW_NO_ENV_HINTS=1     # quieter output
+export HOMEBREW_NO_INSTALL_CLEANUP=1  # skip per-install cleanup passes; run `brew cleanup` yourself
+
 usage() {
   cat <<'USAGE'
 Usage: ./setup.sh [options] [filter ...]
