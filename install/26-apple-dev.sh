@@ -6,36 +6,28 @@ source "$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)/lib/bootstrap.sh"
 
 log "Installing Apple developer tools from App Store..."
 
-# Check if mas is available
 if ! command -v mas &>/dev/null; then
   log "ERROR: mas not installed. Run 25-mas.sh first."
   return 1
 fi
 
-# Note: mas account/signin broken on macOS 12+
-# Note: mas install requires sudo on macOS 14.8.2+, 15.7.2+
-# User must be signed into App Store.app manually
+# mas 7+ requests root for the steps that need it, reusing the sudo credentials
+# setup.sh cached at start. Never run it under sudo: as root the App Store
+# download lands in root's temp dir and the receipt copy fails with
+# "Failed to copy receipt for <app> from '/var/folders/...'".
+mas_install_app() {
+  local id="$1" name="$2"
+  if [[ -d "/Applications/${name}.app" ]]; then
+    log "✓ ${name} already installed"
+  elif mas install "${id}"; then
+    log "✓ ${name} installed"
+  else
+    log "NOTE: ${name} was not installed — sign in to App Store.app and run './setup.sh apple-dev'."
+  fi
+}
 
-# Refresh sudo silently (in case credential cache expired)
-sudo -n true 2>/dev/null || true
-
-# Apple Developer (640199958)
-if [[ -d "/Applications/Apple Developer.app" ]]; then
-  log "✓ Apple Developer already installed"
-else
-  log "Installing Apple Developer (may require password)..."
-  sudo mas install 640199958
-  log "✓ Apple Developer installed"
-fi
-
-# TestFlight (899247664)
-if [[ -d "/Applications/TestFlight.app" ]]; then
-  log "✓ TestFlight already installed"
-else
-  log "Installing TestFlight (may require password)..."
-  sudo mas install 899247664
-  log "✓ TestFlight installed"
-fi
+# Second argument is the .app bundle name in /Applications.
+mas_install_app 640199958 "Developer"
+mas_install_app 899247664 "TestFlight"
 
 log "✓ Apple developer tools installed"
-log "NOTE: If install failed, ensure you're signed into App Store.app"

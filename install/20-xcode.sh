@@ -46,10 +46,11 @@ elif [[ -n "${XCODES_USERNAME:-}" && -n "${XCODES_PASSWORD:-}" ]]; then
   LATEST_APP="$(find_latest_xcode)"
 else
   log "Installing Xcode from the Mac App Store (requires App Store sign-in)..."
-  # Refresh cached sudo credentials if present; mas install needs root on
-  # recent macOS. `|| true` keeps the run going when not signed in.
-  sudo -n true 2>/dev/null || true
-  if sudo mas install "${XCODE_MAS_ID}"; then
+  # Do NOT prefix with sudo: mas 7+ elevates the specific steps that need root
+  # itself (reusing the sudo credentials setup.sh cached). Running the whole
+  # process as root breaks the download/receipt handoff with
+  # "Failed to copy receipt ... from /var/folders/...".
+  if mas install "${XCODE_MAS_ID}"; then
     XCODE_INSTALLED_NOW=1
     LATEST_APP="$(find_latest_xcode)"
   else

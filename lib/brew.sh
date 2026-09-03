@@ -37,18 +37,17 @@ brew_ensure() {
 brew_has_formula() { brew list --formula "$1" >/dev/null 2>&1; }
 brew_has_cask()    { brew list --cask "$1" >/dev/null 2>&1; }
 
-# Formulas run in the foreground, not under a spinner. On a fresh Mac,
-# `brew install` may run the first-time `brew update`, install the Command
-# Line Tools (sudo password prompt), or build from source when no bottle
-# exists for the current macOS. A spinner hides all of that, so the run
-# looks hung and any prompt waits forever.
+# Formulas install under a quiet spinner. This is safe only because nothing
+# can prompt any more: setup.sh exports HOMEBREW_NO_ASK=1 (no dependency
+# confirmation), 00-homebrew.sh ensures the Command Line Tools and runs the
+# one-time `brew update`. ui_spin passes --show-error, so a failed install
+# still prints brew's output.
 brew_install_formula() {
   local name="$1"
   if brew_has_formula "$name"; then
     ui_skip "$name"
   else
-    ui_step "Installing $name..."
-    brew install "$name"
+    ui_spin "Installing $name..." brew install "$name"
     ui_success "$name"
   fi
 }
