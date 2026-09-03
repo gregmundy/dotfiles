@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# xcodes is installed via the Brewfile; this only verifies it is present.
 xcodes_ensure() {
   brew_ensure
-  brew_install_formula xcodes
+  command -v xcodes >/dev/null 2>&1 || { echo "ERROR: xcodes not found — run './setup.sh brewfile' first." >&2; return 1; }
 }
 
 xcodes_install_latest() {

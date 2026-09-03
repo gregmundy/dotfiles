@@ -4,8 +4,11 @@ set -euo pipefail
 # shellcheck source=/dev/null
 source "$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)/lib/bootstrap.sh"
 
-log "Installing uv (Python package/version manager)..."
-brew_install_formula uv
+# uv itself comes from the Brewfile.
+if ! command -v uv >/dev/null 2>&1; then
+  log "ERROR: uv not found — run './setup.sh brewfile' first."
+  return 1
+fi
 
 log "Installing Python versions via uv..."
 

@@ -6,10 +6,7 @@ source "$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)/lib/bootstrap.sh"
 
 ZSHRC="${HOME}/.zshrc"
 
-log "Installing direnv..."
-
-brew_install_formula direnv
-
+# direnv itself comes from the Brewfile; this only enables the OMZ plugin.
 log "Ensuring Oh My Zsh direnv plugin is enabled..."
 
 if [[ ! -f "${ZSHRC}" ]]; then

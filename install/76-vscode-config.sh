@@ -53,43 +53,6 @@ if [[ -f "${SRC_KEYS}" ]]; then
   fi
 fi
 
-# Install extensions listed in dotfiles/vscode/extensions.txt
-SRC_EXTS="${REPO_ROOT}/dotfiles/vscode/extensions.txt"
-
-# Resolve the `code` CLI. It is on PATH when the cask's shim is linked, but fall
-# back to the binary inside the app bundle so a fresh install works before the
-# user has opened VS Code once.
-CODE_BIN=""
-if command -v code &>/dev/null; then
-  CODE_BIN="code"
-elif [[ -x "/Applications/Visual Studio Code.app/Contents/Resources/app/bin/code" ]]; then
-  CODE_BIN="/Applications/Visual Studio Code.app/Contents/Resources/app/bin/code"
-fi
-
-if [[ -f "${SRC_EXTS}" && -n "${CODE_BIN}" ]]; then
-  log "Installing VS Code extensions..."
-
-  # Query the installed set once — `code --install-extension` is slow enough
-  # that per-extension probing noticeably drags out setup.
-  INSTALLED_EXTS="$("${CODE_BIN}" --list-extensions 2>/dev/null | tr '[:upper:]' '[:lower:]' || true)"
-
-  while IFS= read -r ext || [[ -n "${ext}" ]]; do
-    # Strip comments and surrounding whitespace; skip blanks.
-    ext="${ext%%#*}"
-    ext="$(echo "${ext}" | xargs || true)"
-    [[ -z "${ext}" ]] && continue
-
-    if grep -qxF "$(echo "${ext}" | tr '[:upper:]' '[:lower:]')" <<< "${INSTALLED_EXTS}"; then
-      ui_skip "${ext}"
-    else
-      ui_spin "Installing ${ext}..." "${CODE_BIN}" --install-extension "${ext}" --force
-      ui_success "${ext}"
-    fi
-  done < "${SRC_EXTS}"
-
-  log "✓ VS Code extensions installed"
-elif [[ -f "${SRC_EXTS}" ]]; then
-  log "NOTE: VS Code 'code' CLI not found — skipped extensions. Open VS Code and run 'Shell Command: Install code command in PATH', then re-run setup."
-fi
+# VS Code extensions are declared in the Brewfile (vscode "..." entries).
 
 log "✓ Editor configs installed"
