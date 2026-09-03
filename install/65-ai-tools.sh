@@ -12,6 +12,19 @@ log "Installing AI tools..."
 brew_install_cask chatgpt
 
 ###############################################################################
+# Codex (OpenAI desktop app for managing coding agents)
+#
+# Cask token is `codex-app`, NOT `codex` — the `codex` cask is the terminal
+# CLI, which is already managed via Node (@openai/codex in
+# dotfiles/nvm/default-packages). Installing both would be redundant.
+#
+# WARNING: codex-app is deprecated in Homebrew (discontinued upstream) and is
+# scheduled to be disabled on 2027-07-12. Kept for parity with the current
+# machine; drop this line once the desktop app is retired.
+###############################################################################
+brew_install_cask codex-app
+
+###############################################################################
 # Claude (Anthropic)
 ###############################################################################
 brew_install_cask claude
@@ -27,10 +40,12 @@ brew_install_cask lm-studio
 brew_install_cask ollama-app
 
 ###############################################################################
-# llamavm - nvm-style version manager for source-built llama.cpp
+# llamavm  - nvm-style version manager for source-built llama.cpp
+# llamactl - supervisor / model manager for llama.cpp servers
 ###############################################################################
 brew tap gregmundy/tap >/dev/null 2>&1 || true
 brew_install_cask llamavm
+brew_install_cask llamactl
 
 log "✓ AI tools installed"
-log "NOTE: Open ChatGPT, Claude, Ollama, and LM Studio once to sign in / start daemons."
+log "NOTE: Open ChatGPT, Codex, Claude, Ollama, and LM Studio once to sign in / start daemons."

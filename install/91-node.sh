@@ -54,16 +54,29 @@ else
   fi
 fi
 
-# Add zstyle directive before source $ZSH/oh-my-zsh.sh if not present
+# Add zstyle directive before source $ZSH/oh-my-zsh.sh if not present.
+# `autoload` = switch Node versions automatically on cd into a dir with .nvmrc.
 if grep -Fq "zstyle ':omz:plugins:nvm' autoload" "${ZSHRC}"; then
   log "✓ nvm zstyle directive already present"
 else
   # Insert zstyle line before the source $ZSH/oh-my-zsh.sh line
   sed -i '' '/^[[:space:]]*source \$ZSH\/oh-my-zsh.sh/i\
-# nvm: autoload to avoid slow shell startup\
+# Auto-switch Node when entering a directory with .nvmrc\
 zstyle '"'"':omz:plugins:nvm'"'"' autoload true\
 ' "${ZSHRC}"
   log "✓ Added nvm zstyle directive"
+fi
+
+# The nvm install script appends its own eager `source nvm.sh` block to
+# ~/.zshrc. The OMZ nvm plugin already sources nvm.sh (and its completion),
+# so that block loads nvm twice and roughly doubles shell startup time.
+# Strip it; the plugin is the single owner of nvm initialisation.
+if grep -Eq '^\[ -s "\$NVM_DIR/(nvm\.sh|bash_completion)" \]' "${ZSHRC}"; then
+  grep -Ev '^\[ -s "\$NVM_DIR/(nvm\.sh|bash_completion)" \]' "${ZSHRC}" > "${ZSHRC}.tmp"
+  mv "${ZSHRC}.tmp" "${ZSHRC}"
+  log "✓ Removed duplicate nvm.sh sourcing from .zshrc (OMZ plugin owns it)"
+else
+  log "✓ No duplicate nvm.sh sourcing in .zshrc"
 fi
 
 # Deploy default-packages (auto-installed with each new Node version)
@@ -85,30 +98,73 @@ export NVM_DIR="${NVM_DIR}"
 # shellcheck source=/dev/null
 [[ -s "${NVM_DIR}/nvm.sh" ]] && source "${NVM_DIR}/nvm.sh"
 
+if ! command -v nvm &>/dev/null; then
+  log "NOTE: nvm not available in current shell — restart terminal and re-run this installer."
+  log "✓ nvm setup complete (Node install deferred)"
+  return 0
+fi
+
 # Install latest LTS and set as default
 log "Installing latest LTS Node.js..."
-if command -v nvm &>/dev/null; then
-  # Check if LTS is already installed
-  LTS_VERSION=$(nvm version-remote --lts 2>/dev/null || echo "")
-  if [[ -n "$LTS_VERSION" ]] && nvm ls "$LTS_VERSION" &>/dev/null; then
-    log "✓ Node.js LTS ($LTS_VERSION) already installed"
-  else
-    nvm install --lts
-    log "✓ Node.js LTS installed"
-  fi
+LTS_VERSION="$(nvm version-remote --lts 2>/dev/null || echo "")"
+if [[ -z "${LTS_VERSION}" || "${LTS_VERSION}" == "N/A" ]]; then
+  log "ERROR: Could not resolve the current Node LTS version (offline?)"
+  return 1
+fi
 
-  # Ensure default is set to LTS
-  nvm alias default 'lts/*' &>/dev/null
-  log "✓ Default set to LTS"
-  log "   Node version: $(node --version)"
-  log "   npm version: $(npm --version)"
-
-  # Enable Corepack for native Yarn/pnpm management
-  log "Enabling Corepack..."
-  corepack enable 2>/dev/null || true
-  log "✓ Corepack enabled (yarn/pnpm managed natively)"
+if nvm ls "${LTS_VERSION}" &>/dev/null; then
+  log "✓ Node.js LTS (${LTS_VERSION}) already installed"
 else
-  log "NOTE: nvm not available in current shell — restart terminal and run: nvm install --lts && nvm alias default 'lts/*'"
+  nvm install "${LTS_VERSION}"
+  log "✓ Node.js LTS (${LTS_VERSION}) installed"
+fi
+
+# Pin the default alias to the concrete version rather than the floating
+# `lts/*`. The floating alias silently breaks whenever upstream publishes a
+# new LTS patch: it resolves to a version that isn't installed, nvm activates
+# nothing, and any Homebrew node (pulled in as a dependency of mongosh,
+# opencode, etc.) shadows the nvm toolchain and every global npm binary.
+if [[ "$(nvm version default 2>/dev/null)" == "${LTS_VERSION}" ]]; then
+  log "✓ Default alias already ${LTS_VERSION}"
+else
+  nvm alias default "${LTS_VERSION}" >/dev/null
+  log "✓ Default alias set to ${LTS_VERSION}"
+fi
+nvm use default --silent >/dev/null
+
+log "   Node version: $(node --version)"
+log "   npm version: $(npm --version)"
+
+# default-packages only fire on `nvm install`. Backfill any that are missing
+# from the default version so a list change (or a version installed before
+# the file existed) still converges.
+if [[ -f "${DEST_PACKAGES}" ]]; then
+  log "Ensuring default-packages are installed for ${LTS_VERSION}..."
+  INSTALLED_GLOBALS="$(npm ls -g --depth=0 --json 2>/dev/null | jq -r '.dependencies // {} | keys[]' || true)"
+  while IFS= read -r pkg || [[ -n "${pkg}" ]]; do
+    pkg="${pkg%%#*}"
+    pkg="$(echo "${pkg}" | xargs || true)"
+    [[ -z "${pkg}" ]] && continue
+    if grep -qxF "${pkg}" <<< "${INSTALLED_GLOBALS}"; then
+      ui_skip "${pkg}"
+    else
+      ui_spin "Installing ${pkg}..." npm install -g "${pkg}"
+      ui_success "${pkg}"
+    fi
+  done < "${DEST_PACKAGES}"
+fi
+
+# Enable Corepack for native Yarn/pnpm management
+log "Enabling Corepack..."
+corepack enable 2>/dev/null || true
+log "✓ Corepack enabled (yarn/pnpm managed natively)"
+
+# Sanity check: the node on PATH must be nvm's, not Homebrew's.
+NODE_BIN="$(command -v node || true)"
+if [[ "${NODE_BIN}" == "${NVM_DIR}/"* ]]; then
+  log "✓ node resolves inside nvm (${NODE_BIN})"
+else
+  log "NOTE: node resolves to ${NODE_BIN:-nothing}, not nvm. A Homebrew node (dependency of mongosh/opencode) is shadowing it — open a new shell and check 'nvm current'."
 fi
 
 log "✓ nvm setup complete"

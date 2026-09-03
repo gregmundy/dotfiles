@@ -9,10 +9,13 @@ This is a macOS dotfiles/machine bootstrap repository. It automates the setup of
 ## Running the Setup
 
 ```bash
-./setup.sh
+./setup.sh                 # everything, in numeric order
+./setup.sh node zsh        # only installers whose name contains "node" or "zsh"
+./setup.sh --list          # show which installers would run
+./setup.sh --clean-backups # delete *.bak.<timestamp> files from earlier runs
 ```
 
-This runs all installer scripts in `install/` in numeric order (00-*, 05-*, 10-*, etc.). Each script is sourced, not executed as a subprocess.
+This runs installer scripts in `install/` in numeric order (00-*, 05-*, 10-*, etc.). Each script is sourced, not executed as a subprocess. Filters match against the file name, so `91`, `node`, and `91-node` all select `install/91-node.sh`.
 
 ## Architecture
 
@@ -53,9 +56,9 @@ Scripts are prefixed with numbers to control execution order:
 - 10-19: System config (macOS defaults, directories, editorconfig)
 - 20-29: Build tools (Xcode, mas)
 - 30-39: Terminal & shell (Ghostty, tmux, zsh, direnv)
-- 40-49: Window management (Rectangle), git config, SSH
+- 40-49: Window management (Rectangle), git config, SSH, networking/VPN
 - 50-59: Browsers
-- 60-69: Productivity (apps, AI tools)
+- 60-69: Productivity (apps, CAD/3D, AI tools)
 - 70-79: Dev tools (Docker, IDEs, API tools, Claude Code config, database clients)
 - 80-89: Mobile development (Watchman, CocoaPods)
 - 90-99: Language runtimes (Elixir/Erlang, Node, Python, Go, Rust, Java, OpenTofu)

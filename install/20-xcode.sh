@@ -18,7 +18,10 @@ else
 fi
 
 # Select newest installed version (by filesystem, not xcodes state)
-LATEST_APP="$(ls -1d /Applications/Xcode-*.app 2>/dev/null | sort -V | tail -n 1)"
+# Consider both versioned installs (xcodes: Xcode-16.2.0.app) and a plain
+# App Store / manual install (Xcode.app). sort -V puts Xcode.app first, so
+# a versioned app wins when both exist.
+LATEST_APP="$(ls -1d /Applications/Xcode.app /Applications/Xcode-*.app 2>/dev/null | sort -V | tail -n 1)"
 if [[ -z "${LATEST_APP:-}" ]]; then
   log "ERROR: No Xcode app found after install."
   return 1

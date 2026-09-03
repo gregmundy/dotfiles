@@ -10,9 +10,9 @@ brew_install_cask obsidian
 brew_install_cask notion
 brew_install_cask spotify
 brew_install_cask slack
-brew_install_cask todoist
+brew_install_cask todoist-app
 brew_install_cask appcleaner
-brew_install_cask linear-linear
+brew_install_cask linear
 brew_install_cask figma
 
 log "Installing entertainment..."

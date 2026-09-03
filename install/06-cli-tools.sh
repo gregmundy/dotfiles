@@ -13,6 +13,9 @@ brew_install_formula yq
 # Search and navigation
 brew_install_formula fzf
 brew_install_formula ripgrep
+
+# Fast find (fzf's Ctrl-T / Alt-C pick it up automatically)
+brew_install_formula fd
 brew_install_formula bat
 brew_install_formula eza
 
@@ -43,6 +46,9 @@ brew_install_formula httpie
 
 # Better git diffs
 brew_install_formula git-delta
+
+# PDF utilities (pdftotext, pdfimages)
+brew_install_formula poppler
 
 # Interactive JSON viewer
 brew_install_formula jless

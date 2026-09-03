@@ -45,3 +45,5 @@ coverage/
 *.key
 credentials.json
 secrets.yaml
+
+**/.claude/settings.local.json

@@ -4,3 +4,13 @@
 [user]
     name = Your Name
     email = your.email@example.com
+    # SSH public key from 1Password (Settings → Developer → SSH Agent).
+    # ~/.gitconfig already routes signing through op-ssh-sign.
+    # signingkey = ssh-ed25519 AAAA...
+
+[commit]
+    # Set to true once signingkey is filled in.
+    gpgsign = false
+
+[tag]
+    gpgsign = false

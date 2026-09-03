@@ -7,7 +7,7 @@ ZSH_THEME=""
 # Plugins (zsh-syntax-highlighting must be last)
 plugins=(git direnv asdf zsh-autosuggestions nvm zsh-syntax-highlighting)
 
-# Lazy-load nvm so shells start fast
+# Auto-switch Node when entering a directory with .nvmrc
 zstyle ':omz:plugins:nvm' autoload true
 
 source $ZSH/oh-my-zsh.sh
@@ -15,8 +15,7 @@ source $ZSH/oh-my-zsh.sh
 # Custom aliases, functions, PATH, and tool inits live in the dotfiles
 # repo and are auto-sourced via $ZSH_CUSTOM/dotfiles.zsh, written by
 # install/36-zsh-customizations.sh.
-
-# nvm
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+#
+# nvm is loaded by the OMZ nvm plugin above (it sources $NVM_DIR/nvm.sh
+# and its completion). Do not source nvm.sh here again — it doubles
+# shell startup time for no benefit.

@@ -89,4 +89,25 @@ EOF
   log "✓ Created ${DEST_LOCAL}"
 fi
 
+# Commit signing. gitconfig already points gpg.format=ssh at 1Password's
+# op-ssh-sign, but without a signingkey nothing is signed. Ask once; an
+# explicit `gpgsign = false` records a skip so re-runs stay quiet.
+if git config --file "${DEST_LOCAL}" --get user.signingkey &>/dev/null; then
+  log "✓ Commit signing key already configured"
+elif git config --file "${DEST_LOCAL}" --get commit.gpgsign &>/dev/null; then
+  log "✓ Commit signing explicitly disabled in gitconfig.local"
+else
+  log "Commit signing uses the 1Password SSH agent (Settings → Developer → SSH Agent)."
+  SIGNING_KEY="$(ui_input "SSH public key for commit signing (blank to skip):")"
+  if [[ -n "${SIGNING_KEY}" ]]; then
+    git config --file "${DEST_LOCAL}" user.signingkey "${SIGNING_KEY}"
+    git config --file "${DEST_LOCAL}" commit.gpgsign true
+    git config --file "${DEST_LOCAL}" tag.gpgsign true
+    log "✓ Enabled SSH commit signing"
+  else
+    git config --file "${DEST_LOCAL}" commit.gpgsign false
+    log "✓ Commit signing skipped (set user.signingkey in ${DEST_LOCAL} to enable later)"
+  fi
+fi
+
 log "✓ Git configs installed"

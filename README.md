@@ -162,11 +162,24 @@ Some tools require manual configuration after install:
 ### 1Password SSH agent
 Enable in 1Password: **Settings → Developer → SSH Agent**
 
-### Git identity
-The installer prompts for your name and email, stored in `~/.gitconfig.local` (not committed).
+### Git identity and commit signing
+The installer prompts for your name and email, stored in `~/.gitconfig.local` (not committed). It also asks for an SSH public key to sign commits with via the 1Password agent; leave it blank to skip, and fill in `user.signingkey` later to turn signing on.
+
+### Node
+Node is managed by nvm with the default alias pinned to the installed LTS. If `node` ever resolves to `/opt/homebrew/bin/node` (a dependency of mongosh and opencode), re-run `./setup.sh node` to repin.
 
 ### App Store apps
 Sign into the App Store before running setup. The installer uses `mas` to install Apple Developer and TestFlight.
+
+---
+
+## Running part of the setup
+
+```bash
+./setup.sh node zsh        # only installers whose name contains "node" or "zsh"
+./setup.sh --list          # show which installers would run (with filters)
+./setup.sh --clean-backups # remove *.bak.<timestamp> files left by earlier runs
+```
 
 ---
 

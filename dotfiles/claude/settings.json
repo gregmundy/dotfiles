@@ -1,10 +1,4 @@
 {
-  "enabledPlugins": {
-    "frontend-design@claude-plugins-official": true,
-    "superpowers@claude-plugins-official": true,
-    "claude-md-management@claude-plugins-official": true,
-    "typescript-lsp@claude-plugins-official": true
-  },
   "permissions": {
     "allow": [
       "WebSearch",
@@ -92,5 +86,29 @@
       "Bash(gh issue list:*)",
       "Bash(gh api:*)"
     ]
+  },
+
+  "tui": "fullscreen",
+  "skipDangerousModePermissionPrompt": true,
+  "agentPushNotifEnabled": false,
+
+  "enabledPlugins": {
+    "frontend-design@claude-plugins-official": true,
+    "superpowers@claude-plugins-official": true,
+    "claude-md-management@claude-plugins-official": true,
+    "typescript-lsp@claude-plugins-official": true,
+    "vercel@claude-plugins-official": true,
+    "swift-lsp@claude-plugins-official": true,
+    "expo@claude-plugins-official": true,
+    "swiftui-expert@swiftui-expert-skill": true
+  },
+
+  "extraKnownMarketplaces": {
+    "swiftui-expert-skill": {
+      "source": {
+        "source": "github",
+        "repo": "AvdLee/SwiftUI-Agent-Skill"
+      }
+    }
   }
 }

@@ -197,6 +197,22 @@ ui_input() {
   echo "$result"
 }
 
+# ── Yes/no confirmation (returns 0 for yes) ─────────────────────────
+
+ui_confirm() {
+  local prompt="$1"
+  if _have_gum; then
+    gum confirm \
+      --prompt.foreground '#A78BFA' \
+      --selected.background '#7C3AED' \
+      "  $prompt"
+  else
+    local answer
+    read -rp "  $prompt [y/N] " answer
+    [[ "$answer" =~ ^[Yy]$ ]]
+  fi
+}
+
 # ── Spinners ─────────────────────────────────────────────────────────
 # Different spinners for different operation types.
 

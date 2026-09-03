@@ -18,19 +18,46 @@ fi
 
 ensure_dir "${DEST_DIR}"
 
-if [[ -f "${DEST}" ]]; then
-  if cmp -s "${SRC}" "${DEST}"; then
-    log "✓ Claude settings.json already up to date"
-  else
-    TS="$(date +"%Y%m%d-%H%M%S")"
-    cp -a "${DEST}" "${DEST}.bak.${TS}"
-    log "Backed up existing settings.json to ${DEST}.bak.${TS}"
-    cp -a "${SRC}" "${DEST}"
-    log "✓ Installed ${DEST}"
-  fi
-else
+# No existing config — straight copy.
+if [[ ! -f "${DEST}" ]]; then
   cp -a "${SRC}" "${DEST}"
   log "✓ Installed ${DEST}"
+  log "NOTE: Session-accepted permissions still go to ~/.claude/settings.local.json — not managed here."
+  return 0
 fi
 
+# Merge rather than overwrite. Claude Code writes machine-local keys into this
+# file at runtime (autoMode, onboarding state, per-project trust). A blind copy
+# would silently discard them on every setup run.
+#
+# Semantics of `.[0] * .[1]`: deep merge with the repo (second input) winning on
+# conflicts, and keys present only in the live file preserved untouched. Arrays
+# are replaced wholesale, so dotfiles/claude/settings.json must carry the full
+# desired permissions.allow list — it is the source of truth for that key.
+if ! command -v jq &>/dev/null; then
+  log "ERROR: jq not found — cannot merge settings.json safely. Run 05-misc-deps.sh first."
+  return 1
+fi
+
+MERGED="$(mktemp)"
+if ! jq -s '.[0] * .[1]' "${DEST}" "${SRC}" > "${MERGED}" 2>/dev/null; then
+  rm -f "${MERGED}"
+  log "ERROR: Failed to merge ${DEST} (is it valid JSON?)"
+  return 1
+fi
+
+if jq -e --slurpfile a "${DEST}" --slurpfile b "${MERGED}" -n '$a[0] == $b[0]' >/dev/null 2>&1; then
+  rm -f "${MERGED}"
+  log "✓ Claude settings.json already up to date"
+else
+  TS="$(date +"%Y%m%d-%H%M%S")"
+  cp -a "${DEST}" "${DEST}.bak.${TS}"
+  log "Backed up existing settings.json to ${DEST}.bak.${TS}"
+  # Preserve destination permissions/ownership rather than mv'ing the mktemp file.
+  cat "${MERGED}" > "${DEST}"
+  rm -f "${MERGED}"
+  log "✓ Merged repo settings into ${DEST}"
+fi
+
+log "NOTE: Repo settings win on conflict; machine-local keys (autoMode, etc.) are preserved."
 log "NOTE: Session-accepted permissions still go to ~/.claude/settings.local.json — not managed here."

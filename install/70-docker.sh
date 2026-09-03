@@ -5,7 +5,7 @@ set -euo pipefail
 source "$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)/lib/bootstrap.sh"
 
 log "Installing Docker Desktop..."
-brew_install_cask docker
+brew_install_cask docker-desktop
 
 # Launch Docker Desktop (first-run setup)
 if ! pgrep -f "Docker.app" >/dev/null 2>&1; then

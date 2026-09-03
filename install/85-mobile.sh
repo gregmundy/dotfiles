@@ -12,5 +12,8 @@ brew_install_formula watchman
 # CocoaPods - iOS dependency manager
 brew_install_formula cocoapods
 
+# XcodeGen - generates .xcodeproj from a project.yml spec
+brew_install_formula xcodegen
+
 log "✓ Mobile development tools installed"
 log "NOTE: Expo/EAS CLI are managed via Node (eas-cli in default-packages). Use 'npx expo' to run Expo commands."

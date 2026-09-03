@@ -44,7 +44,7 @@ defaults write NSGlobalDomain _HIHideMenuBar -bool true
 defaults write com.apple.finder AppleShowAllFiles -bool true
 
 # Always show file extensions
-defaults write NSGlobalDomain AppleShowAllExtensions -bool false
+defaults write NSGlobalDomain AppleShowAllExtensions -bool true
 
 # Default Finder view: list
 defaults write com.apple.finder FXPreferredViewStyle -string "Nlsv"
