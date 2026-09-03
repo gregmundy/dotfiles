@@ -11,6 +11,7 @@ INSTALL_DIR="${ROOT_DIR}/install"
 
 # Homebrew behaviour for the whole run. Installers are sourced, so these apply
 # to every brew call. 00-homebrew.sh performs the single `brew update`.
+export HOMEBREW_NO_ASK=1           # Homebrew 6 "ask mode" prompts before installing deps; run unattended
 export HOMEBREW_NO_AUTO_UPDATE=1   # don't re-run `brew update` before each install
 export HOMEBREW_NO_ENV_HINTS=1     # quieter output
 export HOMEBREW_NO_INSTALL_CLEANUP=1  # skip per-install cleanup passes; run `brew cleanup` yourself
