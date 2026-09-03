@@ -89,7 +89,7 @@ brew_ensure_clt() {
 # an install fails with "untrusted tap".
 brew_tap_trusted() {
   local tap="$1"
-  if brew tap-info "$tap" 2>/dev/null | grep -q 'Not installed$'; then
+  if brew tap-info "$tap" 2>&1 | grep -q 'Not installed$'; then
     ui_step "Tapping $tap..."
     brew tap "$tap"
   fi
