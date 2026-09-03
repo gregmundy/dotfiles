@@ -12,7 +12,10 @@ xcodes_install_latest() {
 
 xcodes_select_latest_installed() {
   local latest_app
-  latest_app="$(ls -1d /Applications/Xcode-*.app 2>/dev/null | sort -V | tail -n 1)"
+  local app
+  latest_app="$(for app in /Applications/Xcode.app /Applications/Xcode-*.app; do
+    if [[ -d "$app" ]]; then printf '%s\n' "$app"; fi
+  done | sort -V | tail -n 1)"
 
   if [[ -z "${latest_app:-}" ]]; then
     echo "ERROR: No Xcode app found in /Applications after install." >&2

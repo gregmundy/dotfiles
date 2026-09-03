@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -Eeuo pipefail
+set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
@@ -121,19 +121,35 @@ ui_welcome
 # for the whole run. Several steps need root (xcode-select, mas install, .pkg
 # casks such as Tailscale); without this they each prompt mid-run and an
 # unattended session stalls on whichever one comes first.
+SUDO_KEEPALIVE_PID=""
 if [[ -t 0 ]]; then
   ui_step "Setup needs administrator rights for a few steps (xcode-select, mas, .pkg casks)."
   sudo -v
   ( while true; do sudo -n true 2>/dev/null; sleep 50; kill -0 "$$" 2>/dev/null || exit; done ) &
   SUDO_KEEPALIVE_PID=$!
-  trap 'kill "${SUDO_KEEPALIVE_PID}" 2>/dev/null' EXIT
 fi
-ui_progress_init "${#SCRIPTS[@]}"
 
 # Installers are sourced under set -e, so any unhandled failure ends the whole
-# run. Say which installer and command did it instead of exiting silently.
+# run. Report which installer and command did it instead of exiting silently.
+# (An EXIT trap, not ERR: ERR traps with errtrace also fire inside $(...)
+# substitutions and would pollute captured values.)
 CURRENT_INSTALLER=""
-trap 'ui_error "Setup aborted in ${CURRENT_INSTALLER:-setup.sh}: \"${BASH_COMMAND}\" failed (exit $?)"' ERR
+SETUP_DONE=0
+FAILED_CMD=""
+# Without errtrace this ERR trap only fires at the top level of setup.sh and
+# of the sourced installer, never inside functions or $(...) — so it can
+# safely record the command without printing anything.
+trap 'FAILED_CMD="${BASH_COMMAND}"' ERR
+on_exit() {
+  local rc=$?
+  local failed_cmd="${FAILED_CMD:-${BASH_COMMAND}}"
+  [[ -n "${SUDO_KEEPALIVE_PID}" ]] && kill "${SUDO_KEEPALIVE_PID}" 2>/dev/null
+  if [[ "$rc" -ne 0 && "$SETUP_DONE" -eq 0 && -n "$CURRENT_INSTALLER" ]]; then
+    ui_error "Setup aborted in ${CURRENT_INSTALLER}: \"${failed_cmd}\" failed (exit ${rc})"
+  fi
+}
+trap on_exit EXIT
+ui_progress_init "${#SCRIPTS[@]}"
 
 # Source each installer in order
 for f in "${SCRIPTS[@]}"; do
@@ -146,6 +162,8 @@ for f in "${SCRIPTS[@]}"; do
   source "$f"
 done
 
+CURRENT_INSTALLER=""
+SETUP_DONE=1
 ui_show_notes
 
 ELAPSED="$(( SECONDS - START_TIME ))"

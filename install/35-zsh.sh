@@ -180,7 +180,9 @@ log "Installing oh-my-zsh (if needed)..."
 if [[ -d "$ZSH_DIR" ]]; then
   log "✓ oh-my-zsh already installed"
 else
-  RUNZSH=no CHSH=no sh -c \
+  # Pin ZSH to this HOME's install dir: an inherited $ZSH from the calling
+  # shell makes the OMZ installer refuse to run ("$ZSH folder already exists").
+  ZSH="$ZSH_DIR" RUNZSH=no CHSH=no sh -c \
     "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
   log "✓ oh-my-zsh installed"
 fi

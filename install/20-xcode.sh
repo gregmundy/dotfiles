@@ -17,6 +17,8 @@ source "$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)/lib/bootstrap.sh"
 # an interactive xcodes prompt.
 
 XCODE_MAS_ID=497799835
+# Overridable so the no-Xcode branches can be exercised on a machine that has one.
+XCODE_APPS_DIR="${XCODE_APPS_DIR:-/Applications}"
 
 xcodes_ensure
 brew_install_formula mas
@@ -26,8 +28,8 @@ find_latest_xcode() {
   # Glob loop rather than `ls`: with pipefail, a non-matching pattern makes
   # `ls` fail and the whole sourced setup abort silently.
   local app
-  for app in /Applications/Xcode.app /Applications/Xcode-*.app; do
-    [[ -d "$app" ]] && printf '%s\n' "$app"
+  for app in "${XCODE_APPS_DIR}"/Xcode.app "${XCODE_APPS_DIR}"/Xcode-*.app; do
+    if [[ -d "$app" ]]; then printf '%s\n' "$app"; fi
   done | sort -V | tail -n 1
   return 0
 }

@@ -36,7 +36,7 @@ log "Resolving latest stable Erlang..."
 LATEST_ERLANG="$(
   asdf list all erlang \
     | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$' \
-    | tail -n 1
+    | tail -n 1 || true
 )"
 
 if [[ -z "${LATEST_ERLANG:-}" ]]; then
@@ -59,7 +59,7 @@ if [[ -z "${LATEST_ELIXIR:-}" ]]; then
   LATEST_ELIXIR="$(
     asdf list all elixir \
       | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$' \
-      | tail -n 1
+      | tail -n 1 || true
   )"
 fi
 

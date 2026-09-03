@@ -18,7 +18,7 @@ if [[ ! -d "${NVM_DIR}" ]]; then
     | awk -F/ '{print $NF}' | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' | tail -n 1 || true)"
 
   if [[ -z "${NVM_LATEST}" ]]; then
-    NVM_LATEST="$(curl -fsSL https://api.github.com/repos/nvm-sh/nvm/releases/latest | jq -r '.tag_name')"
+    NVM_LATEST="$(curl -fsSL https://api.github.com/repos/nvm-sh/nvm/releases/latest | jq -r '.tag_name' || true)"
   fi
 
   if [[ -z "${NVM_LATEST}" || "${NVM_LATEST}" == "null" ]]; then
