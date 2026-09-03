@@ -168,8 +168,11 @@ The installer prompts for your name and email, stored in `~/.gitconfig.local` (n
 ### Node
 Node is managed by nvm with the default alias pinned to the installed LTS. If `node` ever resolves to `/opt/homebrew/bin/node` (a dependency of mongosh and opencode), re-run `./setup.sh node` to repin.
 
-### App Store apps
-Sign into the App Store before running setup. The installer uses `mas` to install Apple Developer and TestFlight.
+### App Store apps and Xcode
+Sign into the App Store before running setup. The installer uses `mas` to install Xcode, Apple Developer, and TestFlight without prompting. If you are not signed in, the Xcode step is skipped with a note and the rest of setup continues; run `./setup.sh xcode` later. To install through `xcodes` instead, export `XCODES_USERNAME` and `XCODES_PASSWORD` before running.
+
+### Administrator password
+Setup asks for your password once at the start and keeps the sudo session alive for the run, so `xcode-select`, `mas`, and `.pkg` casks don't each stop to prompt.
 
 ---
 

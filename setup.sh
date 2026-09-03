@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -euo pipefail
+set -Eeuo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
@@ -116,11 +116,29 @@ fi
 START_TIME="$SECONDS"
 
 ui_welcome
+
+# Ask for the sudo password once, up front, and keep the credential cache warm
+# for the whole run. Several steps need root (xcode-select, mas install, .pkg
+# casks such as Tailscale); without this they each prompt mid-run and an
+# unattended session stalls on whichever one comes first.
+if [[ -t 0 ]]; then
+  ui_step "Setup needs administrator rights for a few steps (xcode-select, mas, .pkg casks)."
+  sudo -v
+  ( while true; do sudo -n true 2>/dev/null; sleep 50; kill -0 "$$" 2>/dev/null || exit; done ) &
+  SUDO_KEEPALIVE_PID=$!
+  trap 'kill "${SUDO_KEEPALIVE_PID}" 2>/dev/null' EXIT
+fi
 ui_progress_init "${#SCRIPTS[@]}"
+
+# Installers are sourced under set -e, so any unhandled failure ends the whole
+# run. Say which installer and command did it instead of exiting silently.
+CURRENT_INSTALLER=""
+trap 'ui_error "Setup aborted in ${CURRENT_INSTALLER:-setup.sh}: \"${BASH_COMMAND}\" failed (exit $?)"' ERR
 
 # Source each installer in order
 for f in "${SCRIPTS[@]}"; do
   local_name="$(basename "$f" .sh)"
+  CURRENT_INSTALLER="$local_name"
   # Strip numeric prefix for cleaner display (e.g., "05-misc-deps" → "misc-deps")
   display_name="${local_name#[0-9][0-9]-}"
   ui_header "$display_name"
