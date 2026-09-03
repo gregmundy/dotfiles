@@ -8,7 +8,15 @@ brew_ensure() {
     return 0
   fi
 
-  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+  # NONINTERACTIVE skips the "Press RETURN to continue" pause. The installer
+  # uses the sudo ticket setup.sh cached, then runs `sudo -k` on exit, which
+  # throws that ticket away — so re-validate once afterwards or every later
+  # root step (mas, xcode-select, .pkg casks) prompts again.
+  NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+  if [[ "${SETUP_SUDO_CACHED:-0}" == "1" ]]; then
+    ui_step "Homebrew's installer cleared the sudo session; enter your password once more."
+    sudo -v
+  fi
 
   # Add brew to PATH for future shells + current run
   local BREW_SHELLENV_A='eval "$(/opt/homebrew/bin/brew shellenv)"'

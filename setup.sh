@@ -125,8 +125,19 @@ SUDO_KEEPALIVE_PID=""
 if [[ -t 0 ]]; then
   ui_step "Setup needs administrator rights for a few steps (xcode-select, mas, .pkg casks)."
   sudo -v
-  ( while true; do sudo -n true 2>/dev/null; sleep 50; kill -0 "$$" 2>/dev/null || exit; done ) &
+  # The refresher must not inherit set -e: a single failed `sudo -n` (e.g.
+  # right after something invalidates the ticket) would kill it silently and
+  # every later root step would prompt again.
+  (
+    set +e
+    while true; do
+      sudo -n true 2>/dev/null || true
+      sleep 50
+      kill -0 "$$" 2>/dev/null || exit 0
+    done
+  ) &
   SUDO_KEEPALIVE_PID=$!
+  export SETUP_SUDO_CACHED=1
 fi
 
 # Installers are sourced under set -e, so any unhandled failure ends the whole
