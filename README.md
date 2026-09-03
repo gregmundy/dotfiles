@@ -26,12 +26,13 @@ cd dotfiles
 
 | Category | Tools |
 |----------|-------|
-| **Languages** | Node.js (nvm), Python (uv), Go, Elixir/Erlang (asdf), Rust (rustup), Java (Temurin), OpenTofu |
-| **Editors / IDEs** | VS Code, Cursor, PyCharm, Neovim, Vim |
-| **Containers** | Docker |
-| **API Testing** | Postman, Insomnia, HTTPie |
-| **Database** | DBeaver, NoSQLBooster, MongoDB Atlas CLI, RedisInsight |
-| **Mobile** | Watchman, CocoaPods |
+| **Languages** | Node.js (nvm), Python (uv), Go (+ gopls, staticcheck, GoReleaser), Elixir/Erlang (asdf), Rust (rustup), Java (Temurin), OpenTofu |
+| **Editors / IDEs** | VS Code (+ extensions), Cursor, PyCharm, Neovim, Vim |
+| **AI coding** | Claude Code, Codex, opencode |
+| **Containers** | Docker Desktop |
+| **API Testing** | Postman, Insomnia, HTTPie, ngrok |
+| **Database** | DBeaver, NoSQLBooster, MongoDB Atlas CLI, RedisInsight, Supabase CLI, libpq (psql) |
+| **Mobile** | Xcode, Watchman, CocoaPods, XcodeGen, TestFlight |
 | **Version Control** | Git, Git LFS, GitHub CLI |
 | **Linting / Formatting** | Biome, ShellCheck |
 
@@ -39,8 +40,8 @@ cd dotfiles
 
 | Category | Tools |
 |----------|-------|
-| **Search & Navigation** | ripgrep, fzf, zoxide, eza |
-| **Viewers** | bat, jless, tldr |
+| **Search & Navigation** | ripgrep, fd, fzf, zoxide, eza |
+| **Viewers** | bat, jless, tldr, poppler (pdftotext) |
 | **Data Wrangling** | jq, yq, httpie |
 | **Git & GitHub** | gh, lazygit, delta |
 | **System & Containers** | btop, lazydocker |
@@ -55,9 +56,10 @@ cd dotfiles
 | **Productivity** | Raycast, Obsidian, Notion, Todoist, Linear, Figma, AppCleaner |
 | **Communication** | Slack, Discord, Zoom |
 | **Browsers** | Chrome, DuckDuckGo |
-| **AI** | Claude, ChatGPT, Cursor, Cursor CLI, opencode, LM Studio, Ollama, llamavm |
+| **AI** | Claude, ChatGPT, Codex, LM Studio, Ollama, llamavm, llamactl |
 | **Media** | Spotify |
-| **Security** | 1Password, 1Password CLI |
+| **Security & Network** | 1Password, 1Password CLI, Tailscale, ProtonVPN |
+| **CAD / 3D printing** | Bambu Studio, Autodesk Fusion |
 | **Entertainment** | Steam |
 
 ### System configuration
@@ -66,7 +68,7 @@ cd dotfiles
 - **Shell**: Zsh with Oh My Zsh, Starship prompt, custom aliases and functions
 - **Multiplexer**: tmux
 - **Window Manager**: Rectangle
-- **App Store**: `mas` for installing Apple Developer and TestFlight
+- **App Store**: `mas` for installing Xcode, Apple Developer, and TestFlight
 - **macOS Defaults**: Optimized Finder, Dock, keyboard settings
 
 ---
@@ -125,11 +127,13 @@ If you're already happy with Nix, you should keep using Nix. This isn't an argum
 
 ## Architecture
 
+### Brewfile
+
+Packages live in one place: the `Brewfile` at the repo root declares every tap, formula, cask, Mac App Store app, VS Code extension, and Go tool, and `install/05-brewfile.sh` applies it with `brew bundle`. Installers only do what a Brewfile can't.
+
 ### Installer scripts
 
 Scripts in `install/` run in numeric order:
-
-Packages live in one place: the `Brewfile` at the repo root declares every tap, formula, cask, Mac App Store app, VS Code extension, and Go tool, and `install/05-brewfile.sh` applies it with `brew bundle`. Installers only do what a Brewfile can't.
 
 | Range | Category |
 |-------|----------|
@@ -156,7 +160,7 @@ Helper functions in `lib/` are sourced by installers:
 
 ## Before you run it
 
-1. **Sign in to App Store.app.** Xcode, the Apple Developer app, and TestFlight install through the App Store. Setup asks once at the start whether you're signed in and opens App Store if not; if you skip it, those apps are skipped with a note and you can run `./setup.sh xcode apple-dev` later.
+1. **Sign in to App Store.app.** Xcode, the Apple Developer app, and TestFlight install through the App Store. Setup asks once at the start whether you're signed in and opens App Store if not; if you skip it, those apps fail with a note, the rest of setup continues, and you can run `./setup.sh brewfile xcode` later.
 2. **Have your password ready.** Setup asks for it once at the start (twice on a machine with no Homebrew yet, because Homebrew's installer clears the sudo session).
 
 ---
@@ -175,7 +179,7 @@ The installer prompts for your name and email, stored in `~/.gitconfig.local` (n
 Node is managed by nvm with the default alias pinned to the installed LTS. If `node` ever resolves to `/opt/homebrew/bin/node` (a dependency of mongosh and opencode), re-run `./setup.sh node` to repin.
 
 ### App Store apps and Xcode
-Sign into the App Store before running setup. The installer uses `mas` to install Xcode, Apple Developer, and TestFlight without prompting. If you are not signed in, the Xcode step is skipped with a note and the rest of setup continues; run `./setup.sh xcode` later. To install through `xcodes` instead, export `XCODES_USERNAME` and `XCODES_PASSWORD` before running.
+Apple Developer and TestFlight are `mas` entries in the Brewfile; Xcode is installed by `install/20-xcode.sh` (via `mas`, or via `xcodes` if `XCODES_USERNAME` and `XCODES_PASSWORD` are exported). All of them need App Store.app signed in. If you weren't, run `./setup.sh brewfile xcode` after signing in.
 
 ### Administrator password
 Setup asks for your password once at the start and keeps the sudo session alive for the run, so `xcode-select`, `mas`, and `.pkg` casks don't each stop to prompt.
@@ -224,5 +228,5 @@ Then `./setup.sh brewfile`. Check for drift any time with `brew bundle check --f
 ### Adding dotfiles
 
 1. Add config files to `dotfiles/appname/`
-2. Create an installer to symlink or copy them
-3. Use `cmp -s` to check if files are already up to date
+2. Create an installer that copies them into place (see `install/16-editorconfig.sh` for the pattern)
+3. Use `cmp -s` to skip when already up to date, and back up before overwriting
