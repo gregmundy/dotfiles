@@ -124,7 +124,10 @@ fi
 # new LTS patch: it resolves to a version that isn't installed, nvm activates
 # nothing, and any Homebrew node (pulled in as a dependency of mongosh,
 # opencode, etc.) shadows the nvm toolchain and every global npm binary.
-if [[ "$(nvm version default 2>/dev/null)" == "${LTS_VERSION}" ]]; then
+# Compare the raw alias target, not `nvm version default`: that resolves the
+# alias, so a floating `lts/*` would look "already pinned" whenever it happens
+# to point at the installed LTS today.
+if [[ "$(cat "${NVM_DIR}/alias/default" 2>/dev/null)" == "${LTS_VERSION}" ]]; then
   log "✓ Default alias already ${LTS_VERSION}"
 else
   nvm alias default "${LTS_VERSION}" >/dev/null
