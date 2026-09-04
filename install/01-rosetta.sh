@@ -14,6 +14,6 @@ if arch -x86_64 /usr/bin/true 2>/dev/null; then
   log "✓ Rosetta 2 already installed"
 else
   log "Installing Rosetta 2..."
-  softwareupdate --install-rosetta --agree-to-license
+  run softwareupdate --install-rosetta --agree-to-license
   log "✓ Rosetta 2 installed"
 fi

@@ -24,7 +24,11 @@ ensure_login_shell_is_zsh() {
 
 ensure_zsh_theme() {
   local theme="$1"
-  touch "$ZSHRC"
+  if dry_run && [[ ! -f "$ZSHRC" ]]; then
+    ui_plan "set ZSH_THEME=\"${theme}\" in ~/.zshrc"
+    return 0
+  fi
+  touch "$ZSHRC"  # dry-run: safe (guarded above; no-op on existing file)
 
   # Check if theme is already set correctly
   if grep -Eq "^ZSH_THEME=\"${theme}\"" "$ZSHRC"; then
@@ -33,11 +37,10 @@ ensure_zsh_theme() {
   fi
 
   if grep -Eq '^ZSH_THEME=' "$ZSHRC"; then
-    sed -i '' "s/^ZSH_THEME=.*/ZSH_THEME=\"${theme}\"/" "$ZSHRC"
+    run sed -i '' "s/^ZSH_THEME=.*/ZSH_THEME=\"${theme}\"/" "$ZSHRC"
     log "✓ Updated ZSH_THEME to ${theme}"
   else
-    echo "ZSH_THEME=\"${theme}\"" >> "$ZSHRC"
-    log "✓ Added ZSH_THEME=${theme}"
+    append_line "$ZSHRC" "ZSH_THEME=\"${theme}\""
   fi
 }
 
@@ -112,14 +115,17 @@ normalize_plugins_line() {
 }
 
 ensure_plugins_in_zshrc() {
-  touch "$ZSHRC"
+  if dry_run && [[ ! -f "$ZSHRC" ]]; then
+    ui_plan "configure plugins in ~/.zshrc"
+    return 0
+  fi
+  touch "$ZSHRC"  # dry-run: safe (guarded above; no-op on existing file)
 
   local existing
   existing="$(get_plugins_line)"
 
   if [[ -z "$existing" ]]; then
-    echo "plugins=(git direnv asdf zsh-autosuggestions zsh-syntax-highlighting)" >> "$ZSHRC"
-    log "✓ Added plugins to .zshrc"
+    append_line "$ZSHRC" "plugins=(git direnv asdf zsh-autosuggestions zsh-syntax-highlighting)"
     return 0
   fi
 
@@ -132,12 +138,16 @@ ensure_plugins_in_zshrc() {
   local normalized
   normalized="$(normalize_plugins_line "$existing")"
 
+  if dry_run; then
+    ui_plan "rewrite plugins line in ~/.zshrc to: $normalized"
+    return 0
+  fi
   awk -v new="$normalized" '
     BEGIN { replaced=0 }
     !replaced && $0 ~ /^[[:space:]]*plugins=\(/ { print new; replaced=1; next }
     { print }
-  ' "$ZSHRC" > "${ZSHRC}.tmp"
-  mv "${ZSHRC}.tmp" "$ZSHRC"
+  ' "$ZSHRC" > "${ZSHRC}.tmp"  # dry-run: safe (guarded above)
+  mv "${ZSHRC}.tmp" "$ZSHRC"  # dry-run: safe (guarded above)
   log "✓ Updated plugins in .zshrc"
 }
 
@@ -148,6 +158,10 @@ ensure_plugins_in_zshrc() {
 # (Docker completions, LM Studio CLI, brew shellenv, etc.) survive.
 ensure_zshrc_baseline() {
   local repo_root="$1"
+  if dry_run && [[ ! -f "$ZSHRC" ]]; then
+    ui_plan "install ~/.zshrc from the canonical baseline"
+    return 0
+  fi
   local src="${repo_root}/dotfiles/zsh/zshrc"
 
   if [[ ! -f "$src" ]]; then
@@ -160,15 +174,8 @@ ensure_zshrc_baseline() {
     return 0
   fi
 
-  if [[ -f "$ZSHRC" ]]; then
-    local ts
-    ts="$(date +"%Y%m%d-%H%M%S")"
-    cp -a "$ZSHRC" "${ZSHRC}.bak.${ts}"
-    log "Backed up broken .zshrc to ${ZSHRC}.bak.${ts}"
-  fi
-
-  cp -a "$src" "$ZSHRC"
-  log "✓ Restored .zshrc from canonical baseline"
+  # deploy_file backs up the broken file and installs the canonical one.
+  deploy_file "$src" "$ZSHRC"
 }
 
 # --- begin ----------------------------------------------------------------
@@ -182,8 +189,11 @@ if [[ -d "$ZSH_DIR" ]]; then
 else
   # Pin ZSH to this HOME's install dir: an inherited $ZSH from the calling
   # shell makes the OMZ installer refuse to run ("$ZSH folder already exists").
-  ZSH="$ZSH_DIR" RUNZSH=no CHSH=no sh -c \
-    "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+  install_oh_my_zsh() {
+    ZSH="$ZSH_DIR" RUNZSH=no CHSH=no sh -c \
+      "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+  }
+  run install_oh_my_zsh
   log "✓ oh-my-zsh installed"
 fi
 
@@ -196,7 +206,7 @@ ensure_dir "$ZSH_PLUGINS_DIR"
 if [[ -d "${ZSH_PLUGINS_DIR}/zsh-autosuggestions" ]]; then
   log "✓ zsh-autosuggestions already installed"
 else
-  git clone https://github.com/zsh-users/zsh-autosuggestions.git \
+  run git clone https://github.com/zsh-users/zsh-autosuggestions.git \
     "${ZSH_PLUGINS_DIR}/zsh-autosuggestions"
   log "✓ zsh-autosuggestions installed"
 fi
@@ -204,7 +214,7 @@ fi
 if [[ -d "${ZSH_PLUGINS_DIR}/zsh-syntax-highlighting" ]]; then
   log "✓ zsh-syntax-highlighting already installed"
 else
-  git clone https://github.com/zsh-users/zsh-syntax-highlighting.git \
+  run git clone https://github.com/zsh-users/zsh-syntax-highlighting.git \
     "${ZSH_PLUGINS_DIR}/zsh-syntax-highlighting"
   log "✓ zsh-syntax-highlighting installed"
 fi

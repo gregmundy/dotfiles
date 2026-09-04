@@ -25,6 +25,7 @@ if [[ -z "${_UI_STEP_CURRENT:-}" ]]; then
   _UI_COUNT_INSTALLED=0
   _UI_COUNT_SKIPPED=0
   _UI_COUNT_ERRORS=0
+  _UI_COUNT_PLANNED=0
   _UI_DEFERRED_NOTES=()
   _UI_CURRENT_SCRIPT=""
 fi
@@ -98,6 +99,20 @@ ui_skip() {
     gum style --foreground '#6B7280' " ◇ ${msg}"
   else
     echo "  - $msg (exists)"
+  fi
+}
+
+# ── Planned change (dry run) ─────────────────────────────────────────
+
+ui_plan() {
+  local msg="$1"
+  _UI_COUNT_PLANNED=$(( _UI_COUNT_PLANNED + 1 ))
+  if _have_gum; then
+    local icon
+    icon="$(gum style --foreground '#F59E0B' "○")"
+    gum style " ${icon} would ${msg}"
+  else
+    echo "  ○ would $msg"
   fi
 }
 
@@ -220,6 +235,15 @@ ui_confirm() {
 ui_spin() {
   local msg="$1"
   shift
+  if [[ "${DRY_RUN:-0}" == "1" ]]; then
+    local plan="${msg%...}"
+    case "$plan" in
+      Installing\ *) plan="install ${plan#Installing }" ;;
+      *) plan="run: $plan" ;;
+    esac
+    ui_plan "$plan"
+    return 0
+  fi
   if _have_gum; then
     gum spin --show-error \
       --spinner pulse \
@@ -237,6 +261,15 @@ ui_spin() {
 ui_spin_download() {
   local msg="$1"
   shift
+  if [[ "${DRY_RUN:-0}" == "1" ]]; then
+    local plan="${msg%...}"
+    case "$plan" in
+      Installing\ *) plan="install ${plan#Installing }" ;;
+      *) plan="run: $plan" ;;
+    esac
+    ui_plan "$plan"
+    return 0
+  fi
   if _have_gum; then
     gum spin --show-error \
       --spinner globe \
@@ -254,6 +287,15 @@ ui_spin_download() {
 ui_spin_config() {
   local msg="$1"
   shift
+  if [[ "${DRY_RUN:-0}" == "1" ]]; then
+    local plan="${msg%...}"
+    case "$plan" in
+      Installing\ *) plan="install ${plan#Installing }" ;;
+      *) plan="run: $plan" ;;
+    esac
+    ui_plan "$plan"
+    return 0
+  fi
   if _have_gum; then
     gum spin --show-error \
       --spinner dot \
@@ -271,6 +313,15 @@ ui_spin_config() {
 ui_spin_build() {
   local msg="$1"
   shift
+  if [[ "${DRY_RUN:-0}" == "1" ]]; then
+    local plan="${msg%...}"
+    case "$plan" in
+      Installing\ *) plan="install ${plan#Installing }" ;;
+      *) plan="run: $plan" ;;
+    esac
+    ui_plan "$plan"
+    return 0
+  fi
   if _have_gum; then
     gum spin --show-error \
       --spinner meter \
@@ -328,6 +379,9 @@ ui_complete() {
     installed="$(gum style --foreground '#22C55E' "${_UI_COUNT_INSTALLED} installed")"
     local skipped
     skipped="$(gum style --foreground '#6B7280' "${_UI_COUNT_SKIPPED} unchanged")"
+    if [[ "${DRY_RUN:-0}" == "1" ]]; then
+      installed="$(gum style --foreground '#F59E0B' "${_UI_COUNT_PLANNED} would change")"
+    fi
     if [[ "$_UI_COUNT_ERRORS" -gt 0 ]]; then
       local errors
       errors="$(gum style --foreground '#EF4444' "${_UI_COUNT_ERRORS} errors")"
@@ -341,13 +395,18 @@ ui_complete() {
       --border-foreground '#3F3F46' \
       --padding "1 3" \
       --align center \
-      "$(gum style --foreground '#22C55E' --bold '✓  Setup complete')" \
+      "$(if [[ "${DRY_RUN:-0}" == "1" ]]; then gum style --foreground '#F59E0B' --bold '○  Dry run complete — nothing was changed'; else gum style --foreground '#22C55E' --bold '✓  Setup complete'; fi)" \
       "" \
       "${stats}" \
       "$(gum style --foreground '#6B7280' "${time_str}")"
   else
-    echo "  ✓ Setup complete in ${time_str}"
-    echo "    ${_UI_COUNT_INSTALLED} installed, ${_UI_COUNT_SKIPPED} unchanged, ${_UI_COUNT_ERRORS} errors"
+    if [[ "${DRY_RUN:-0}" == "1" ]]; then
+      echo "  ○ Dry run complete in ${time_str} — nothing was changed"
+      echo "    ${_UI_COUNT_PLANNED} would change, ${_UI_COUNT_SKIPPED} unchanged, ${_UI_COUNT_ERRORS} errors"
+    else
+      echo "  ✓ Setup complete in ${time_str}"
+      echo "    ${_UI_COUNT_INSTALLED} installed, ${_UI_COUNT_SKIPPED} unchanged, ${_UI_COUNT_ERRORS} errors"
+    fi
   fi
   echo ""
 }

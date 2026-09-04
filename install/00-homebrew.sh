@@ -13,5 +13,5 @@ brew_ensure
 # One explicit update here. setup.sh exports HOMEBREW_NO_AUTO_UPDATE=1 so the
 # individual installs below don't each re-run it (and don't stall on it).
 log "Updating Homebrew..."
-brew update
+run brew update
 log "✓ Homebrew ready"

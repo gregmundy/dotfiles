@@ -41,11 +41,19 @@ if [[ -n "${LATEST_APP}" ]]; then
   log "✓ Xcode already present: ${LATEST_APP}"
 elif [[ -n "${XCODES_USERNAME:-}" && -n "${XCODES_PASSWORD:-}" ]]; then
   log "Installing latest Xcode via xcodes (Apple ID from XCODES_USERNAME)..."
-  xcodes install --latest --experimental-unxip --no-superuser
+  if dry_run; then
+    ui_plan "install latest Xcode via xcodes, select it, and run first-launch tasks"
+    return 0
+  fi
+  run xcodes install --latest --experimental-unxip --no-superuser
   XCODE_INSTALLED_NOW=1
   LATEST_APP="$(find_latest_xcode)"
 else
   log "Installing Xcode from the Mac App Store (requires App Store sign-in)..."
+  if dry_run; then
+    ui_plan "install Xcode from the Mac App Store, select it, and run first-launch tasks"
+    return 0
+  fi
   # Do NOT prefix with sudo: mas 7+ elevates the specific steps that need root
   # itself (reusing the sudo credentials setup.sh cached). Running the whole
   # process as root breaks the download/receipt handoff with
@@ -68,18 +76,18 @@ CURRENT_DEV_DIR="$(xcode-select -p 2>/dev/null || true)"
 
 if [[ "$CURRENT_DEV_DIR" != "$DEV_DIR" ]]; then
   log "Selecting: ${LATEST_APP}"
-  sudo xcode-select --switch "$DEV_DIR"
+  run sudo xcode-select --switch "$DEV_DIR"
 else
   log "✓ Xcode already selected: $DEV_DIR"
 fi
 
 if [[ "$XCODE_INSTALLED_NOW" == "1" ]]; then
   log "Running first-launch tasks..."
-  sudo xcodebuild -runFirstLaunch || true
-  sudo xcodebuild -license accept || true
+  run sudo xcodebuild -runFirstLaunch || true
+  run sudo xcodebuild -license accept || true
 
   log "Downloading iOS platform / simulator runtime..."
-  xcodebuild -downloadPlatform iOS || true
+  run xcodebuild -downloadPlatform iOS || true
 else
   log "✓ Skipping first-launch tasks (Xcode was not newly installed)"
 fi

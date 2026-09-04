@@ -19,7 +19,7 @@ mas_install_app() {
   local id="$1" name="$2"
   if [[ -d "/Applications/${name}.app" ]]; then
     log "✓ ${name} already installed"
-  elif mas install "${id}"; then
+  elif run mas install "${id}"; then
     log "✓ ${name} installed"
   else
     log "NOTE: ${name} was not installed — sign in to App Store.app and run './setup.sh apple-dev'."

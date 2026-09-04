@@ -16,29 +16,31 @@ SRC_CONFIG="${REPO_ROOT}/dotfiles/ssh/config"
 DEST_CONFIG="${SSH_DIR}/config"
 
 ensure_dir "${SSH_DIR}"
-chmod 700 "${SSH_DIR}"
+if [[ -d "${SSH_DIR}" && "$(stat -f '%Lp' "${SSH_DIR}")" != "700" ]]; then
+  run chmod 700 "${SSH_DIR}"
+fi
 
-# Deploy SSH config
 if [[ ! -f "${SRC_CONFIG}" ]]; then
   log "ERROR: Missing ${SRC_CONFIG}"
   return 1
 fi
 
+append_ssh_config() {
+  printf '\n' >> "${DEST_CONFIG}"  # dry-run: safe (called via run)
+  cat "${SRC_CONFIG}" >> "${DEST_CONFIG}"  # dry-run: safe (called via run)
+}
+
 if [[ -f "${DEST_CONFIG}" ]]; then
-  # Check if 1Password agent is already configured
+  # Existing config: add the 1Password agent block rather than replacing it.
   if grep -Fq "2BUA8C4S2C.com.1password" "${DEST_CONFIG}"; then
     log "✓ 1Password SSH agent already configured"
   else
-    # Append our config to existing file
     log "Appending 1Password agent config to existing SSH config..."
-    echo "" >> "${DEST_CONFIG}"
-    cat "${SRC_CONFIG}" >> "${DEST_CONFIG}"
+    run append_ssh_config
     log "✓ Added 1Password agent to SSH config"
   fi
 else
-  cp -a "${SRC_CONFIG}" "${DEST_CONFIG}"
-  chmod 600 "${DEST_CONFIG}"
-  log "✓ Installed ${DEST_CONFIG}"
+  deploy_file "${SRC_CONFIG}" "${DEST_CONFIG}" 600
 fi
 
 log "✓ SSH config installed"

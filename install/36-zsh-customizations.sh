@@ -16,7 +16,7 @@ if [[ ! -d "${ZSH_CUSTOM_DIR}" ]]; then
   return 1
 fi
 
-if [[ ! -f "${ZSHRC}" ]]; then
+if [[ ! -f "${ZSHRC}" ]] && ! dry_run; then
   log "ERROR: ${ZSHRC} not found. Install Oh My Zsh first."
   return 1
 fi
@@ -41,9 +41,7 @@ export DOTFILES_ZSH_LOADED=1"
 if [[ -f "${LOADER_FILE}" ]] && grep -Fq "${ZSH_CUSTOM_DIR}" "${LOADER_FILE}"; then
   log "✓ OMZ custom loader already installed"
 else
-  ensure_dir "${OMZ_CUSTOM}"
-  echo "${LOADER_CONTENT}" > "${LOADER_FILE}"
-  log "✓ Installed OMZ custom loader: ${LOADER_FILE}"
+  write_file "${LOADER_FILE}" "${LOADER_CONTENT}"
 fi
 
 log "✓ Zsh customizations installed"

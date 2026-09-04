@@ -14,6 +14,8 @@ source "${ROOT_DIR}/lib/brew.sh"
 source "${ROOT_DIR}/lib/fs.sh"
 # shellcheck source=/dev/null
 source "${ROOT_DIR}/lib/xcodes.sh"
+# shellcheck source=/dev/null
+source "${ROOT_DIR}/lib/run.sh"
 
 # Route log() through ui helpers.
 # Parses prefixes to pick the right style:

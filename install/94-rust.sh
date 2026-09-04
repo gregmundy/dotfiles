@@ -18,7 +18,7 @@ fi
 if [[ -d "${HOME}/.rustup/toolchains" ]] && ls "${HOME}/.rustup/toolchains" | grep -q stable; then
   log "✓ Rust stable toolchain already installed"
 else
-  "${RUSTUP}" default stable
+  run "${RUSTUP}" default stable
   log "✓ Rust stable toolchain installed"
 fi
 

@@ -17,20 +17,25 @@ log "Ensuring asdf plugins (erlang, elixir)..."
 if asdf plugin list | grep -Fxq "erlang"; then
   log "✓ asdf plugin already installed: erlang"
 else
-  asdf plugin add erlang https://github.com/asdf-vm/asdf-erlang.git
+  run asdf plugin add erlang https://github.com/asdf-vm/asdf-erlang.git
   log "✓ Installed asdf plugin: erlang"
 fi
 
 if asdf plugin list | grep -Fxq "elixir"; then
   log "✓ asdf plugin already installed: elixir"
 else
-  asdf plugin add elixir https://github.com/asdf-vm/asdf-elixir.git
+  run asdf plugin add elixir https://github.com/asdf-vm/asdf-elixir.git
   log "✓ Installed asdf plugin: elixir"
 fi
 
+if dry_run && ! { asdf plugin list | grep -Fxq erlang && asdf plugin list | grep -Fxq elixir; }; then
+  ui_plan "install latest stable Erlang and Elixir via asdf and set them as global defaults"
+  return 0
+fi
+
 log "Updating asdf plugin indexes..."
-asdf plugin update erlang
-asdf plugin update elixir
+run asdf plugin update erlang
+run asdf plugin update elixir
 
 log "Resolving latest stable Erlang..."
 LATEST_ERLANG="$(
@@ -75,23 +80,30 @@ log "Installing Erlang (if needed)..."
 if asdf list erlang 2>/dev/null | grep -Fq "${LATEST_ERLANG}"; then
   log "✓ Erlang already installed: ${LATEST_ERLANG}"
 else
-  asdf install erlang "${LATEST_ERLANG}"
+  run asdf install erlang "${LATEST_ERLANG}"
 fi
 
 log "Installing Elixir (if needed)..."
 if asdf list elixir 2>/dev/null | grep -Fq "${LATEST_ELIXIR}"; then
   log "✓ Elixir already installed: ${LATEST_ELIXIR}"
 else
-  asdf install elixir "${LATEST_ELIXIR}"
+  run asdf install elixir "${LATEST_ELIXIR}"
 fi
 
 log "Setting global defaults..."
-asdf set -u erlang "${LATEST_ERLANG}"
-asdf set -u elixir "${LATEST_ELIXIR}"
-
-log "Reshimming..."
-asdf reshim erlang
-asdf reshim elixir
+TOOL_VERSIONS="${HOME}/.tool-versions"
+if grep -qsx "erlang ${LATEST_ERLANG}" "${TOOL_VERSIONS}"; then
+  log "✓ Global erlang already ${LATEST_ERLANG}"
+else
+  run asdf set -u erlang "${LATEST_ERLANG}"
+  run asdf reshim erlang
+fi
+if grep -qsx "elixir ${LATEST_ELIXIR}" "${TOOL_VERSIONS}"; then
+  log "✓ Global elixir already ${LATEST_ELIXIR}"
+else
+  run asdf set -u elixir "${LATEST_ELIXIR}"
+  run asdf reshim elixir
+fi
 
 log "✓ Erlang/Elixir installed and configured"
 log "   Erlang: ${LATEST_ERLANG}"

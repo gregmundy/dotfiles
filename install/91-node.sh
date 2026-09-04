@@ -26,7 +26,8 @@ if [[ ! -d "${NVM_DIR}" ]]; then
     return 1
   fi
   log "Installing nvm ${NVM_LATEST}..."
-  curl -o- "https://raw.githubusercontent.com/nvm-sh/nvm/${NVM_LATEST}/install.sh" | bash
+  install_nvm() { curl -o- "https://raw.githubusercontent.com/nvm-sh/nvm/${NVM_LATEST}/install.sh" | bash; }
+  run install_nvm
   log "✓ nvm ${NVM_LATEST} installed"
 else
   log "✓ nvm already installed"
@@ -35,6 +36,11 @@ fi
 log "Configuring nvm oh-my-zsh plugin..."
 
 if [[ ! -f "${ZSHRC}" ]]; then
+  if dry_run; then
+    ui_plan "enable the nvm OMZ plugin and .nvmrc autoload in ~/.zshrc"
+    ui_plan "install the current Node LTS, pin it as default, and install default-packages"
+    return 0
+  fi
   log "ERROR: ${ZSHRC} not found. Install Oh My Zsh first."
   return 1
 fi
@@ -46,7 +52,7 @@ else
   # Add nvm to plugins array
   if grep -Eq '^[[:space:]]*plugins=\(' "${ZSHRC}"; then
     # Insert nvm into existing plugins list (before the closing paren)
-    sed -i '' 's/^[[:space:]]*plugins=(\([^)]*\))/plugins=(\1 nvm)/' "${ZSHRC}"
+    run sed -i '' 's/^[[:space:]]*plugins=(\([^)]*\))/plugins=(\1 nvm)/' "${ZSHRC}"
     log "✓ Added nvm to plugins list"
   else
     log "ERROR: No plugins=() found in ${ZSHRC}"
@@ -60,7 +66,7 @@ if grep -Fq "zstyle ':omz:plugins:nvm' autoload" "${ZSHRC}"; then
   log "✓ nvm zstyle directive already present"
 else
   # Insert zstyle line before the source $ZSH/oh-my-zsh.sh line
-  sed -i '' '/^[[:space:]]*source \$ZSH\/oh-my-zsh.sh/i\
+  run sed -i '' '/^[[:space:]]*source \$ZSH\/oh-my-zsh.sh/i\
 # Auto-switch Node when entering a directory with .nvmrc\
 zstyle '"'"':omz:plugins:nvm'"'"' autoload true\
 ' "${ZSHRC}"
@@ -72,8 +78,11 @@ fi
 # so that block loads nvm twice and roughly doubles shell startup time.
 # Strip it; the plugin is the single owner of nvm initialisation.
 if grep -Eq '^\[ -s "\$NVM_DIR/(nvm\.sh|bash_completion)" \]' "${ZSHRC}"; then
-  grep -Ev '^\[ -s "\$NVM_DIR/(nvm\.sh|bash_completion)" \]' "${ZSHRC}" > "${ZSHRC}.tmp"
-  mv "${ZSHRC}.tmp" "${ZSHRC}"
+  strip_nvm_lines() {
+    grep -Ev '^\[ -s "\$NVM_DIR/(nvm\.sh|bash_completion)" \]' "${ZSHRC}" > "${ZSHRC}.tmp"  # dry-run: safe (called via run)
+    mv "${ZSHRC}.tmp" "${ZSHRC}"  # dry-run: safe (called via run)
+  }
+  run strip_nvm_lines
   log "✓ Removed duplicate nvm.sh sourcing from .zshrc (OMZ plugin owns it)"
 else
   log "✓ No duplicate nvm.sh sourcing in .zshrc"
@@ -85,12 +94,7 @@ SRC_PACKAGES="${REPO_ROOT}/dotfiles/nvm/default-packages"
 DEST_PACKAGES="${NVM_DIR}/default-packages"
 
 if [[ -f "${SRC_PACKAGES}" ]]; then
-  if [[ -f "${DEST_PACKAGES}" ]] && cmp -s "${SRC_PACKAGES}" "${DEST_PACKAGES}"; then
-    log "✓ default-packages already up to date"
-  else
-    cp -a "${SRC_PACKAGES}" "${DEST_PACKAGES}"
-    log "✓ Installed default-packages"
-  fi
+  deploy_file "${SRC_PACKAGES}" "${DEST_PACKAGES}"
 fi
 
 # Source nvm for this script
@@ -115,7 +119,7 @@ fi
 if nvm ls "${LTS_VERSION}" &>/dev/null; then
   log "✓ Node.js LTS (${LTS_VERSION}) already installed"
 else
-  nvm install "${LTS_VERSION}"
+  run nvm install "${LTS_VERSION}"
   log "✓ Node.js LTS (${LTS_VERSION}) installed"
 fi
 
@@ -130,10 +134,16 @@ fi
 if [[ "$(cat "${NVM_DIR}/alias/default" 2>/dev/null)" == "${LTS_VERSION}" ]]; then
   log "✓ Default alias already ${LTS_VERSION}"
 else
-  nvm alias default "${LTS_VERSION}" >/dev/null
+  run nvm alias default "${LTS_VERSION}" >/dev/null
   log "✓ Default alias set to ${LTS_VERSION}"
 fi
-nvm use default --silent >/dev/null
+nvm use default --silent >/dev/null 2>&1 || true  # dry-run: safe (current process only)
+
+if dry_run && ! nvm ls "${LTS_VERSION}" &>/dev/null; then
+  ui_plan "install default-packages into ${LTS_VERSION} and enable corepack"
+  log "✓ nvm setup complete (dry run)"
+  return 0
+fi
 
 log "   Node version: $(node --version)"
 log "   npm version: $(npm --version)"
@@ -158,9 +168,14 @@ if [[ -f "${DEST_PACKAGES}" ]]; then
 fi
 
 # Enable Corepack for native Yarn/pnpm management
-log "Enabling Corepack..."
-corepack enable 2>/dev/null || true
-log "✓ Corepack enabled (yarn/pnpm managed natively)"
+NODE_BIN_DIR="$(dirname "$(command -v node)")"
+if [[ -x "${NODE_BIN_DIR}/pnpm" && -x "${NODE_BIN_DIR}/yarn" ]]; then
+  log "✓ Corepack already enabled"
+else
+  log "Enabling Corepack..."
+  run corepack enable 2>/dev/null || true
+  log "✓ Corepack enabled (yarn/pnpm managed natively)"
+fi
 
 # Sanity check: the node on PATH must be nvm's, not Homebrew's.
 NODE_BIN="$(command -v node || true)"

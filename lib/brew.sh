@@ -7,6 +7,10 @@ brew_ensure() {
   if have_brew; then
     return 0
   fi
+  if [[ "${DRY_RUN:-0}" == "1" ]]; then
+    ui_plan "install Homebrew (everything below assumes it is present)"
+    return 0
+  fi
 
   # NONINTERACTIVE skips the "Press RETURN to continue" pause. The installer
   # uses the sudo ticket setup.sh cached, then runs `sudo -k` on exit, which
@@ -54,6 +58,8 @@ brew_install_formula() {
   local name="$1"
   if brew_has_formula "$name"; then
     ui_skip "$name"
+  elif [[ "${DRY_RUN:-0}" == "1" ]]; then
+    ui_plan "install formula $name"
   else
     ui_spin "Installing $name..." brew install "$name"
     ui_success "$name"
@@ -70,6 +76,10 @@ brew_ensure_clt() {
     return 0
   fi
 
+  if [[ "${DRY_RUN:-0}" == "1" ]]; then
+    ui_plan "install Xcode Command Line Tools"
+    return 0
+  fi
   ui_step "Installing Xcode Command Line Tools (approve the macOS dialog)..."
   xcode-select --install >/dev/null 2>&1 || true
   local waited=0
@@ -93,12 +103,18 @@ brew_tap_trusted() {
   # SIGPIPEs brew and the whole test reads as false.
   info="$(brew tap-info "$tap" 2>&1 || true)"
   if [[ "$info" == *"Not installed"* ]]; then
+    if [[ "${DRY_RUN:-0}" == "1" ]]; then
+      ui_plan "tap and trust $tap"
+      return 0
+    fi
     ui_step "Tapping $tap..."
     brew tap "$tap"
     info="$(brew tap-info "$tap" 2>&1 || true)"
   fi
   if [[ $'\n'"$info"$'\n' == *$'\nTrusted\n'* ]]; then
     ui_skip "$tap trusted"
+  elif [[ "${DRY_RUN:-0}" == "1" ]]; then
+    ui_plan "trust tap $tap"
   else
     brew trust --tap "$tap" >/dev/null
     ui_success "$tap trusted"
@@ -109,6 +125,8 @@ brew_install_cask() {
   local name="$1"
   if brew_has_cask "$name"; then
     ui_skip "$name"
+  elif [[ "${DRY_RUN:-0}" == "1" ]]; then
+    ui_plan "install cask $name"
   else
     # No spinner — some casks prompt for sudo (e.g. Zoom, 1Password)
     # and gum spin swallows the password prompt

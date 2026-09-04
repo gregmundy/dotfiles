@@ -25,6 +25,7 @@ runs only installers whose file name contains a filter (e.g. "91", "node",
 "zsh"), still in numeric order.
 
 Options:
+  -n, --dry-run          Show what would change without changing anything
   -l, --list             List installers (with the filters applied) and exit
   -c, --clean-backups    Remove *.bak.<timestamp> files left by earlier runs
   -h, --help             Show this help
@@ -69,11 +70,13 @@ clean_backups() {
 }
 
 LIST_ONLY=0
+export DRY_RUN=0
 FILTERS=()
 while [[ $# -gt 0 ]]; do
   case "$1" in
     -h|--help) usage; exit 0 ;;
     -l|--list) LIST_ONLY=1 ;;
+    -n|--dry-run) DRY_RUN=1 ;;
     -c|--clean-backups) clean_backups; exit 0 ;;
     -*) echo "Unknown option: $1" >&2; usage >&2; exit 2 ;;
     *) FILTERS+=("$1") ;;
@@ -121,8 +124,12 @@ ui_welcome
 # for the whole run. Several steps need root (xcode-select, mas install, .pkg
 # casks such as Tailscale); without this they each prompt mid-run and an
 # unattended session stalls on whichever one comes first.
+if [[ "$DRY_RUN" == "1" ]]; then
+  ui_note "Dry run: reporting what would change; nothing is installed, written, or prompted for."
+fi
+
 SUDO_KEEPALIVE_PID=""
-if [[ -t 0 ]]; then
+if [[ -t 0 && "$DRY_RUN" != "1" ]]; then
   ui_step "Setup needs administrator rights for a few steps (xcode-select, mas, .pkg casks)."
   sudo -v
   # The refresher must not inherit set -e: a single failed `sudo -n` (e.g.
@@ -158,7 +165,7 @@ app_store_apps_missing() {
   done
   [[ "$have_xcode" == "0" || ! -d /Applications/Developer.app || ! -d /Applications/TestFlight.app ]]
 }
-if [[ -t 0 ]] && { run_includes 20-xcode || run_includes 26-apple-dev; } && app_store_apps_missing; then
+if [[ -t 0 && "$DRY_RUN" != "1" ]] && { run_includes 20-xcode || run_includes 26-apple-dev; } && app_store_apps_missing; then
   ui_step "Xcode, Developer, and TestFlight install from the Mac App Store, which needs a signed-in Apple Account."
   if ! ui_confirm "Are you signed in to App Store.app?"; then
     open -a "App Store" 2>/dev/null || true

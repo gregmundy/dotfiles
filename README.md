@@ -188,8 +188,11 @@ Setup asks for your password once at the start and keeps the sudo session alive 
 ```bash
 ./setup.sh node zsh        # only installers whose name contains "node" or "zsh"
 ./setup.sh --list          # show which installers would run (with filters)
+./setup.sh --dry-run       # report what would change without changing anything
 ./setup.sh --clean-backups # remove *.bak.<timestamp> files left by earlier runs
 ```
+
+`--dry-run` is trustworthy because every side effect in the installers goes through a small set of helpers (`run`, `deploy_file`, `defaults_write`, ...) that print instead of act, and `tests/lint-side-effects.sh` fails if an installer bypasses them. On an already-configured machine it lists only real drift: packages not installed, dotfiles that differ from the repo, macOS defaults that don't match.
 
 ---
 
@@ -206,10 +209,11 @@ Setup asks for your password once at the start and keeps the sudo session alive 
    ```
 3. Use `log` for all output
 4. Use `brew_install_formula` or `brew_install_cask`
-5. Make idempotent (check before installing)
+5. Route side effects through `run` / `deploy_file` / `defaults_write` so `--dry-run` works, then run `tests/lint-side-effects.sh`
+6. Make idempotent (check before installing)
 
 ### Adding dotfiles
 
 1. Add config files to `dotfiles/appname/`
-2. Create an installer to symlink or copy them
-3. Use `cmp -s` to check if files are already up to date
+2. Create an installer that calls `deploy_file "$REPO/dotfiles/app/file" "$HOME/.file"` (see `install/16-editorconfig.sh`)
+3. `deploy_file` handles the up-to-date check, backup, and dry-run for you

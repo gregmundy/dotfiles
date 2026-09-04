@@ -19,7 +19,7 @@ for version in 3.12 3.13; do
   if uv_has_python "$version"; then
     log "✓ Python $version already installed"
   else
-    uv python install "$version"
+    run uv python install "$version"
     log "✓ Python $version installed"
   fi
 done

@@ -6,84 +6,46 @@ source "$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)/lib/bootstrap.sh"
 
 log "Applying macOS UI defaults..."
 
-###############################################################################
+# defaults_write reads the current value first, so re-runs (and dry runs)
+# only touch keys that actually differ.
+BEFORE="$_UI_COUNT_INSTALLED"
+
 # Dock
-###############################################################################
+defaults_write com.apple.dock tilesize -int 36
+defaults_write com.apple.dock magnification -bool true          # hover zoom
+defaults_write com.apple.dock largesize -int 54
+defaults_write com.apple.dock autohide -bool true
+defaults_write com.apple.dock orientation -string bottom
+defaults_write com.apple.dock minimize-to-application -bool true
+defaults_write com.apple.dock mru-spaces -bool false            # don't reorder Spaces
 
-# Dock size (balanced)
-defaults write com.apple.dock tilesize -int 36
-
-# Magnification on hover (54px, up from 36px base)
-defaults write com.apple.dock magnification -bool true
-defaults write com.apple.dock largesize -int 54
-
-# Auto-hide Dock (default animation speed)
-defaults write com.apple.dock autohide -bool true
-
-# Dock at the bottom (your preference)
-defaults write com.apple.dock orientation -string bottom
-
-# Minimize windows into app icon (keeps Dock tidy)
-defaults write com.apple.dock minimize-to-application -bool true
-
-# Prevent Spaces from reordering automatically
-defaults write com.apple.dock mru-spaces -bool false
-
-###############################################################################
 # Menu bar
-###############################################################################
+defaults_write NSGlobalDomain _HIHideMenuBar -bool true
 
-# Auto-hide menu bar (more vertical space)
-defaults write NSGlobalDomain _HIHideMenuBar -bool true
-
-###############################################################################
 # Finder
-###############################################################################
+defaults_write com.apple.finder AppleShowAllFiles -bool true
+defaults_write NSGlobalDomain AppleShowAllExtensions -bool true
+defaults_write com.apple.finder FXPreferredViewStyle -string "Nlsv"   # list view
+defaults_write com.apple.finder ShowPathbar -bool true
+defaults_write com.apple.finder ShowStatusBar -bool true
+defaults_write com.apple.finder FXDefaultSearchScope -string "SCcf"   # search current folder
 
-# Show hidden files
-defaults write com.apple.finder AppleShowAllFiles -bool true
+# Keyboard (log out/in may be required)
+defaults_write NSGlobalDomain KeyRepeat -int 1
+defaults_write NSGlobalDomain InitialKeyRepeat -int 15
 
-# Always show file extensions
-defaults write NSGlobalDomain AppleShowAllExtensions -bool true
+# Trackpad: tap to click, three-finger drag
+defaults_write com.apple.AppleMultitouchTrackpad Clicking -bool true
+defaults_write com.apple.driver.AppleBluetoothMultitouch.trackpad Clicking -bool true
+defaults_write com.apple.AppleMultitouchTrackpad TrackpadThreeFingerDrag -bool true
+defaults_write com.apple.driver.AppleBluetoothMultitouch.trackpad TrackpadThreeFingerDrag -bool true
 
-# Default Finder view: list
-defaults write com.apple.finder FXPreferredViewStyle -string "Nlsv"
-
-# Show path bar + status bar
-defaults write com.apple.finder ShowPathbar -bool true
-defaults write com.apple.finder ShowStatusBar -bool true
-
-# Search current folder by default
-defaults write com.apple.finder FXDefaultSearchScope -string "SCcf"
-
-###############################################################################
-# Keyboard
-###############################################################################
-
-# Fast key repeat (log out/in may be required)
-defaults write NSGlobalDomain KeyRepeat -int 1
-defaults write NSGlobalDomain InitialKeyRepeat -int 15
-
-###############################################################################
-# Trackpad
-###############################################################################
-
-# Tap to click
-defaults write com.apple.AppleMultitouchTrackpad Clicking -bool true
-defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad Clicking -bool true
-
-# Three-finger drag
-defaults write com.apple.AppleMultitouchTrackpad TrackpadThreeFingerDrag -bool true
-defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad TrackpadThreeFingerDrag -bool true
-
-###############################################################################
-# Apply changes
-###############################################################################
-
-log "Restarting UI services..."
-killall Dock >/dev/null 2>&1 || true
-killall Finder >/dev/null 2>&1 || true
-killall SystemUIServer >/dev/null 2>&1 || true
+if [[ "$_UI_COUNT_INSTALLED" -ne "$BEFORE" ]] || { dry_run && [[ "$_UI_COUNT_PLANNED" -gt 0 ]]; }; then
+  log "Restarting UI services..."
+  run killall Dock || true
+  run killall Finder || true
+  run killall SystemUIServer || true
+  log "NOTE: If keyboard repeat doesn't feel updated, log out and back in."
+fi
 
 log "✓ UI defaults applied"
-log "NOTE: If keyboard repeat doesn't feel updated, log out and back in."

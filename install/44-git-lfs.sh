@@ -12,7 +12,7 @@ if git config --global --get filter.lfs.clean &>/dev/null; then
   log "✓ Git LFS already configured"
 else
   log "Configuring Git LFS..."
-  git lfs install
+  run git lfs install
   log "✓ Git LFS configured"
 fi
 

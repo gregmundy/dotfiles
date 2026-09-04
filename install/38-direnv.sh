@@ -13,6 +13,10 @@ brew_install_formula direnv
 log "Ensuring Oh My Zsh direnv plugin is enabled..."
 
 if [[ ! -f "${ZSHRC}" ]]; then
+  if dry_run; then
+    ui_plan "enable direnv plugin in ~/.zshrc"
+    return 0
+  fi
   log "ERROR: ${ZSHRC} not found. Install Oh My Zsh first."
   return 1
 fi
@@ -25,18 +29,14 @@ fi
 
 # If no plugins block exists, add one (conservative default).
 if ! grep -Eq '^[[:space:]]*plugins=\(' "${ZSHRC}"; then
-  {
-    echo ""
-    echo "# Oh My Zsh plugins"
-    echo "plugins=(git direnv)"
-  } >> "${ZSHRC}"
-  log "✓ Added plugins block with direnv"
+  append_line "${ZSHRC}" "# Oh My Zsh plugins"
+  append_line "${ZSHRC}" "plugins=(git direnv)"
   return 0
 fi
 
 # Otherwise, insert 'direnv' into the first plugins=(...) block.
 # This handles typical OMZ single-line and multi-line plugins blocks.
-perl -0777 -i -pe '
+run perl -0777 -i -pe '
   my $done = 0;
   s{
     (^[ \t]*plugins=\()      # start of plugins block

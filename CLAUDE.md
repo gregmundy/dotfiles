@@ -12,6 +12,7 @@ This is a macOS dotfiles/machine bootstrap repository. It automates the setup of
 ./setup.sh                 # everything, in numeric order
 ./setup.sh node zsh        # only installers whose name contains "node" or "zsh"
 ./setup.sh --list          # show which installers would run
+./setup.sh --dry-run       # report what would change (installs, file deploys, defaults) without doing it
 ./setup.sh --clean-backups # delete *.bak.<timestamp> files from earlier runs
 ```
 
@@ -40,6 +41,15 @@ source "$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)/lib/bootstrap.sh"
 - `brew_ensure` - Install Homebrew if missing
 - `brew_install_formula <name>` - Install formula (idempotent)
 - `brew_install_cask <name>` - Install cask (idempotent, no spinner so sudo prompts aren't swallowed)
+
+**run.sh** - Dry-run plumbing. `setup.sh --dry-run` exports `DRY_RUN=1`; every side effect in an installer must go through one of these so a dry run prints instead of acting:
+- `run <cmd...>` - Execute, or print "would run" in dry-run. Wrap multi-command steps in a function and `run` the function.
+- `deploy_file <src> <dest> [mode]` - Copy a dotfile into place: skip if identical, back up then replace if different, create parent dirs.
+- `defaults_write <domain> <key> <-bool|-int|-string> <value>` - Idempotent `defaults write` (reads first, skips if equal).
+- `append_line <file> <line>` / `write_file <dest> <content>` - Idempotent file edits.
+- `dry_run` - Predicate for steps that need a custom plan message (e.g. interactive prompts).
+
+`tests/lint-side-effects.sh` greps `install/*.sh` for raw side-effecting commands (cp, sed -i, brew install, git clone, ...) that bypass these helpers. Run it after editing an installer. A line that is genuinely read-only or only reachable outside dry-run can be marked `# dry-run: safe`.
 
 **fs.sh** - Filesystem helpers:
 - `ensure_dir <path>` - Create directory if missing
@@ -70,7 +80,8 @@ Scripts are prefixed with numbers to control execution order:
 3. Source bootstrap.sh
 4. Use `log` function for all output (prefixes with script name)
 5. Use idempotent checks (installers may run multiple times)
-6. Use `return 1` for errors (scripts are sourced, not executed)
+6. Route every side effect through `run`, `deploy_file`, `defaults_write`, `append_line`, `write_file`, or the brew helpers so `--dry-run` stays truthful; run `tests/lint-side-effects.sh`
+7. Use `return 1` for errors (scripts are sourced, not executed)
 
 ### Logging Conventions
 
