@@ -4,7 +4,8 @@ set -euo pipefail
 # shellcheck source=/dev/null
 source "$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)/lib/bootstrap.sh"
 
-log "Installing tmux config (tmux itself comes from the Brewfile)..."
+log "Installing tmux..."
+brew_install_formula tmux
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 SRC="${REPO_ROOT}/dotfiles/tmux/tmux.conf"
@@ -30,4 +31,4 @@ else
   log "✓ Installed ${DEST}"
 fi
 
-log "✓ tmux configured"
+log "✓ tmux installed and configured"

@@ -4,11 +4,8 @@ set -euo pipefail
 # shellcheck source=/dev/null
 source "$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)/lib/bootstrap.sh"
 
-# git-lfs itself comes from the Brewfile; this registers its git hooks.
-if ! command -v git-lfs &>/dev/null; then
-  log "ERROR: git-lfs not found — run './setup.sh brewfile' first."
-  return 1
-fi
+log "Installing Git LFS..."
+brew_install_formula git-lfs
 
 # Check if git lfs is already configured
 if git config --global --get filter.lfs.clean &>/dev/null; then

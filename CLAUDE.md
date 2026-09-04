@@ -22,8 +22,7 @@ This runs installer scripts in `install/` in numeric order (00-*, 05-*, 10-*, et
 ### Directory Structure
 
 - `setup.sh` - Main entry point that sources all installers in order
-- `Brewfile` - Single source of truth for everything Homebrew can install: taps, formulae, casks, Mac App Store apps, VS Code extensions, Go tools. Applied by `install/05-brewfile.sh` via `brew bundle`.
-- `install/` - Numbered installer scripts (XX-name.sh) run sequentially. These handle what a Brewfile cannot: macOS defaults, dotfile deployment, shell/runtime setup, Xcode selection.
+- `install/` - Numbered installer scripts (XX-name.sh) run sequentially
 - `lib/` - Shared helper functions sourced by installers
 - `dotfiles/` - Config files deployed to `$HOME` by installers
 - `templates/` - Reference templates (e.g. `docker-compose/`) not auto-deployed
@@ -38,9 +37,9 @@ source "$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)/lib/bootstrap.sh"
 **ui.sh** - Gum-powered UI helpers (falls back to plain text if `gum` is missing). Provides section headers, step/success/skip/error styling, spinners (`ui_spin`, `ui_spin_download`, `ui_spin_config`, `ui_spin_build`), styled input (`ui_input`), deferred post-install notes (`ui_defer_note` + `ui_show_notes`), and the welcome/completion banners. `log()` routes through these — call `ui_*` directly only when you need styling `log()` doesn't cover.
 
 **brew.sh** - Homebrew helpers:
-- `brew_ensure` - Install Homebrew if missing (and re-validate sudo afterwards)
-- `brew_ensure_clt` - Install the Command Line Tools if missing
-- `brew_install_formula` / `brew_install_cask` / `brew_tap_trusted` - Ad-hoc helpers; prefer adding to `Brewfile`
+- `brew_ensure` - Install Homebrew if missing
+- `brew_install_formula <name>` - Install formula (idempotent)
+- `brew_install_cask <name>` - Install cask (idempotent, no spinner so sudo prompts aren't swallowed)
 
 **fs.sh** - Filesystem helpers:
 - `ensure_dir <path>` - Create directory if missing
@@ -53,19 +52,16 @@ source "$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)/lib/bootstrap.sh"
 ### Installer Naming Convention
 
 Scripts are prefixed with numbers to control execution order:
-- 00-09: Bootstrap (Command Line Tools, Homebrew, Brewfile)
+- 00-09: Bootstrap (Homebrew, build dependencies)
 - 10-19: System config (macOS defaults, directories, editorconfig)
-- 20-29: Xcode install/selection
-- 30-39: Terminal & shell config (Ghostty, vim/nvim, tmux, zsh, starship, direnv plugin)
-- 40-49: Git config, git-lfs hooks, SSH config
-- 70-79: Docker login item, Claude Code, VS Code settings, Claude Code config
-- 90-99: Language runtimes (Elixir/Erlang via asdf, Node via nvm, Python via uv, Rust via rustup)
-
-Everything installable by Homebrew (including casks, `mas` apps, VS Code extensions, and Go tools) belongs in `Brewfile`, not in an installer.
-
-### Adding Software
-
-Add a line to `Brewfile` (`brew`, `cask`, `mas`, `vscode`, or `go`). Only write an installer when the step is not something Homebrew Bundle can express (config deployment, defaults, runtime version setup).
+- 20-29: Build tools (Xcode, mas)
+- 30-39: Terminal & shell (Ghostty, tmux, zsh, direnv)
+- 40-49: Window management (Rectangle), git config, SSH, networking/VPN
+- 50-59: Browsers
+- 60-69: Productivity (apps, CAD/3D, AI tools)
+- 70-79: Dev tools (Docker, IDEs, API tools, Claude Code config, database clients)
+- 80-89: Mobile development (Watchman, CocoaPods)
+- 90-99: Language runtimes (Elixir/Erlang, Node, Python, Go, Rust, Java, OpenTofu)
 
 ### Writing New Installers
 

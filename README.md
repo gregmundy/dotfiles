@@ -85,7 +85,7 @@ dotfiles/
 ├── starship/        # Starship prompt config (Gruvbox Dark)
 ├── tmux/            # tmux configuration
 ├── vim/             # Vim configuration (.vimrc)
-├── vscode/          # VS Code settings and keybindings (extensions are in Brewfile)
+├── vscode/          # VS Code settings and keybindings
 └── zsh/             # Aliases, functions, PATH additions
 ```
 
@@ -129,17 +129,18 @@ If you're already happy with Nix, you should keep using Nix. This isn't an argum
 
 Scripts in `install/` run in numeric order:
 
-Packages live in one place: the `Brewfile` at the repo root declares every tap, formula, cask, Mac App Store app, VS Code extension, and Go tool, and `install/05-brewfile.sh` applies it with `brew bundle`. Installers only do what a Brewfile can't.
-
 | Range | Category |
 |-------|----------|
-| `00-09` | Bootstrap (Command Line Tools, Homebrew, Brewfile) |
-| `10-19` | System configuration (macOS defaults, editorconfig) |
-| `20-29` | Xcode install and selection |
-| `30-39` | Terminal & shell config (Ghostty, vim/nvim, tmux, Zsh, Starship, direnv) |
-| `40-49` | Git config, git-lfs hooks, SSH config |
-| `70-79` | Docker login item, Claude Code, VS Code settings, Claude config |
-| `90-99` | Language runtimes (Elixir, Node, Python, Rust) |
+| `00-09` | Bootstrap (Homebrew, CLI tools) |
+| `10-19` | System configuration (macOS defaults) |
+| `20-29` | Build tools (Xcode, mas) |
+| `30-39` | Terminal & shell (Ghostty, Zsh, Neovim) |
+| `40-49` | Window management, Git, SSH |
+| `50-59` | Browsers |
+| `60-69` | Productivity & communication |
+| `70-79` | Dev tools (Docker, IDEs, databases) |
+| `80-89` | Mobile development (Watchman, CocoaPods) |
+| `90-99` | Language runtimes |
 
 ### Library functions
 
@@ -147,7 +148,7 @@ Helper functions in `lib/` are sourced by installers:
 
 - **bootstrap.sh** — Sources the other libs and provides the `log()` dispatcher
 - **ui.sh** — Gum-powered UI helpers (sections, spinners, deferred notes)
-- **brew.sh** — `brew_ensure`, `brew_ensure_clt`, plus ad-hoc install helpers (prefer `Brewfile`)
+- **brew.sh** — `brew_ensure`, `brew_install_formula`, `brew_install_cask`
 - **fs.sh** — `ensure_dir`
 - **apps.sh** — `app_installed` (checks `/Applications` and `~/Applications`)
 - **xcodes.sh** — Xcode version management
@@ -194,20 +195,6 @@ Setup asks for your password once at the start and keeps the sudo session alive 
 
 ## Customization
 
-### Adding software
-
-Add a line to `Brewfile`:
-
-```ruby
-brew "ripgrep"
-cask "ghostty"
-mas "TestFlight", id: 899247664
-vscode "golang.go"
-go "golang.org/x/tools/gopls"
-```
-
-Then `./setup.sh brewfile`. Check for drift any time with `brew bundle check --file Brewfile --verbose`.
-
 ### Adding a new installer
 
 1. Create `install/XX-name.sh` with appropriate number prefix
@@ -218,7 +205,7 @@ Then `./setup.sh brewfile`. Check for drift any time with `brew bundle check --f
    source "$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)/lib/bootstrap.sh"
    ```
 3. Use `log` for all output
-4. Put any packages in `Brewfile`, not in the script
+4. Use `brew_install_formula` or `brew_install_cask`
 5. Make idempotent (check before installing)
 
 ### Adding dotfiles

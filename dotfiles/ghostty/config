@@ -1,7 +1,7 @@
 # Ghostty Configuration
 # https://ghostty.org/docs/config
 
-# Font (Nerd Font variant, installed via the Brewfile; keeps
+# Font (Nerd Font variant, installed by install/06-cli-tools.sh; keeps
 # Starship glyphs identical between Ghostty and the VS Code terminal)
 font-family = JetBrainsMono Nerd Font Mono
 font-size = 14

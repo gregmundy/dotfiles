@@ -4,9 +4,12 @@ set -euo pipefail
 # shellcheck source=/dev/null
 source "$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)/lib/bootstrap.sh"
 
-# asdf itself comes from the Brewfile (v0.16+ is a Go binary — nothing to source).
+log "Installing asdf version manager..."
+brew_install_formula asdf
+
+# asdf v0.16+ is a Go binary — no shell init script to source, just verify it's on PATH
 if ! command -v asdf >/dev/null 2>&1; then
-  log "ERROR: asdf not found — run './setup.sh brewfile' first."
+  log "ERROR: asdf not found on PATH after brew install"
   return 1
 fi
 

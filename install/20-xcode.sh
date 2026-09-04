@@ -20,11 +20,8 @@ XCODE_MAS_ID=497799835
 # Overridable so the no-Xcode branches can be exercised on a machine that has one.
 XCODE_APPS_DIR="${XCODE_APPS_DIR:-/Applications}"
 
-# xcodes and mas are installed by the Brewfile (install/05-brewfile.sh).
-if ! command -v xcodes &>/dev/null || ! command -v mas &>/dev/null; then
-  log "ERROR: xcodes/mas not found — run './setup.sh brewfile' first."
-  return 1
-fi
+xcodes_ensure
+brew_install_formula mas
 
 find_latest_xcode() {
   # Both a plain Xcode.app (App Store) and versioned Xcode-<ver>.app (xcodes).

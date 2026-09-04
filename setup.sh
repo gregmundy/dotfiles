@@ -140,8 +140,7 @@ if [[ -t 0 ]]; then
   export SETUP_SUDO_CACHED=1
 fi
 
-# App Store preflight. Xcode (20-xcode) and the Developer/TestFlight apps
-# (Brewfile mas entries) install through mas,
+# App Store preflight. Xcode, Developer, and TestFlight install through mas,
 # which needs an Apple Account signed in to App Store.app and offers no way to
 # check that from the command line. Ask once, up front, only when this run
 # includes those steps and the apps are actually missing.
@@ -159,11 +158,11 @@ app_store_apps_missing() {
   done
   [[ "$have_xcode" == "0" || ! -d /Applications/Developer.app || ! -d /Applications/TestFlight.app ]]
 }
-if [[ -t 0 ]] && { run_includes 05-brewfile || run_includes 20-xcode; } && app_store_apps_missing; then
+if [[ -t 0 ]] && { run_includes 20-xcode || run_includes 26-apple-dev; } && app_store_apps_missing; then
   ui_step "Xcode, Developer, and TestFlight install from the Mac App Store, which needs a signed-in Apple Account."
   if ! ui_confirm "Are you signed in to App Store.app?"; then
     open -a "App Store" 2>/dev/null || true
-    ui_step "App Store opened. Sign in, then press Enter to continue (or press Enter now; those apps will fail and can be re-run with './setup.sh brewfile xcode')."
+    ui_step "App Store opened. Sign in, then press Enter to continue (or press Enter now to skip those apps)."
     read -r _
   fi
 fi

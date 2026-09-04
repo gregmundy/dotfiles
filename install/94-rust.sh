@@ -4,7 +4,8 @@ set -euo pipefail
 # shellcheck source=/dev/null
 source "$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)/lib/bootstrap.sh"
 
-log "Installing Rust toolchain (rustup itself comes from the Brewfile)..."
+log "Installing Rust via rustup..."
+brew_install_formula rustup
 
 RUSTUP="$(brew --prefix rustup)/bin/rustup"
 

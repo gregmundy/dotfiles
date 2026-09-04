@@ -4,11 +4,8 @@ set -euo pipefail
 # shellcheck source=/dev/null
 source "$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)/lib/bootstrap.sh"
 
-log "Configuring Docker Desktop (installed by the Brewfile)..."
-if [[ ! -d /Applications/Docker.app ]]; then
-  log "NOTE: Docker Desktop not installed — run './setup.sh brewfile', then re-run './setup.sh docker'."
-  return 0
-fi
+log "Installing Docker Desktop..."
+brew_install_cask docker-desktop
 
 # Launch Docker Desktop (first-run setup)
 if ! pgrep -f "Docker.app" >/dev/null 2>&1; then

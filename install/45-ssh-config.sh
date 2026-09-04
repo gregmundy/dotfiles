@@ -4,7 +4,11 @@ set -euo pipefail
 # shellcheck source=/dev/null
 source "$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)/lib/bootstrap.sh"
 
-log "Installing SSH config (1Password itself comes from the Brewfile)..."
+log "Installing 1Password and SSH config..."
+
+# Install 1Password and CLI
+brew_install_cask 1password
+brew_install_cask 1password-cli
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 SSH_DIR="${HOME}/.ssh"
