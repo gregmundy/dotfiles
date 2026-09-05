@@ -131,9 +131,19 @@ brew_install_cask() {
     # No spinner — some casks prompt for sudo (e.g. Zoom, 1Password)
     # and gum spin swallows the password prompt
     ui_step "Installing $name..."
-    # --adopt takes over an existing app bundle at the target path
-    # (e.g. manually-installed LM Studio) instead of erroring
-    brew install --cask --adopt "$name"
-    ui_success "$name"
+    # --adopt takes over an existing app bundle at the target path (e.g. a
+    # manually installed LM Studio) — but only when it is the exact version
+    # the cask ships. A hand-installed app at any other version makes adopt
+    # fail ("existing App is different"), so fall back to --force, which
+    # replaces the app with Homebrew's copy and brings it under management.
+    if brew install --cask --adopt "$name"; then
+      ui_success "$name"
+    elif brew install --cask --force "$name"; then
+      ui_success "$name (replaced an existing copy with the cask version)"
+    else
+      # One GUI app failing must not abort the whole run.
+      ui_error "$name failed to install — see output above"
+      ui_defer_note "Cask $name failed to install. Fix the cause and re-run the installer that declares it."
+    fi
   fi
 }
