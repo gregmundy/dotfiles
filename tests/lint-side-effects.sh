@@ -17,7 +17,7 @@ while IFS= read -r line; do
   # Allowed: inside a function whose body is only ever invoked via `run`.
   echo "  $file:$lineno: $text"
   status=1
-done < <(grep -nE "$PATTERN" install/*.sh uninstall.sh || true)
+done < <(grep -nE "$PATTERN" install/*.sh uninstall.sh upgrade.sh || true)
 
 # Redirections that write files: `>>` and `> "` outside helpers/functions.
 while IFS= read -r line; do
@@ -26,10 +26,10 @@ while IFS= read -r line; do
   [[ "$text" =~ ^[[:space:]]*run[[:space:]] ]] && continue
   echo "  $line"
   status=1
-done < <(grep -nE '(>>|[^&2]>[[:space:]]*"\$)' install/*.sh uninstall.sh | grep -vE '2>&1|>/dev/null|2>/dev/null' || true)
+done < <(grep -nE '(>>|[^&2]>[[:space:]]*"\$)' install/*.sh uninstall.sh upgrade.sh | grep -vE '2>&1|>/dev/null|2>/dev/null' || true)
 
 if [[ $status -eq 0 ]]; then
-  echo "lint: no unguarded side effects in install/*.sh or uninstall.sh"
+  echo "lint: no unguarded side effects in install/*.sh, uninstall.sh, or upgrade.sh"
 else
   echo "lint: unguarded side effects found (route through run/deploy_file/... or mark '# dry-run: safe')"
 fi

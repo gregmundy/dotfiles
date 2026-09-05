@@ -186,6 +186,21 @@ Setup asks for your password once at the start and keeps the sudo session alive 
 
 ---
 
+## Upgrading
+
+Setup only installs what's missing; it never upgrades. To bring the machine up to date:
+
+```bash
+./upgrade.sh              # brew, App Store, Node LTS, Erlang/Elixir, Rust, uv Pythons, npm globals, Claude Code, Codex, VS Code extensions, brew cleanup
+./upgrade.sh --dry-run    # list what would be upgraded
+./upgrade.sh brew mas     # only some sections
+./upgrade.sh --greedy     # also upgrade self-updating casks (Chrome, Slack, ...)
+```
+
+Xcode is only upgraded when you ask (`./upgrade.sh xcode`, via xcodes and an Apple ID); an App Store-installed Xcode is covered by the `mas` section.
+
+---
+
 ## Uninstalling
 
 ```bash

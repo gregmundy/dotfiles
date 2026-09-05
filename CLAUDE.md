@@ -18,6 +18,10 @@ This is a macOS dotfiles/machine bootstrap repository. It automates the setup of
 
 This runs installer scripts in `install/` in numeric order (00-*, 05-*, 10-*, etc.). Each script is sourced, not executed as a subprocess. Filters match against the file name, so `91`, `node`, and `91-node` all select `install/91-node.sh`.
 
+## Upgrading
+
+`./upgrade.sh` updates what setup installed (setup itself never upgrades). Sections: `brew mas node elixir rust python npm claude codex vscode cleanup` (default) plus `xcode` on request; `--dry-run` and `--greedy`. The node and elixir sections source the corresponding installers, so the "install latest and repin" logic lives in one place. Same `run`/`dry_run` helpers, covered by `tests/lint-side-effects.sh`.
+
 ## Uninstalling
 
 `./uninstall.sh` reverses setup. Dry run by default; `--apply` executes after a typed confirmation. Tiers: `--configs --runtimes --apps --packages --defaults --homebrew` (all when none given). Formula, cask, tap, mas, and defaults lists are grepped from `install/*.sh`, so adding a package to an installer automatically adds it to the uninstaller. Config files move to `~/.dotfiles-uninstall-<ts>/`; regenerable trees (nvm, asdf, ...) are deleted; `remove_tree` refuses paths outside `$HOME`. Uses the same `run`/`dry_run` helpers as the installers and is covered by `tests/lint-side-effects.sh`.
@@ -27,6 +31,7 @@ This runs installer scripts in `install/` in numeric order (00-*, 05-*, 10-*, et
 ### Directory Structure
 
 - `setup.sh` - Main entry point that sources all installers in order
+- `upgrade.sh` - Updates everything setup installed (see below)
 - `uninstall.sh` - Reverses setup (dry run by default, see below)
 - `install/` - Numbered installer scripts (XX-name.sh) run sequentially
 - `lib/` - Shared helper functions sourced by installers
