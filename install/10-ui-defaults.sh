@@ -24,7 +24,7 @@ defaults_write NSGlobalDomain _HIHideMenuBar -bool true
 
 # Finder
 defaults_write com.apple.finder AppleShowAllFiles -bool true
-defaults_write NSGlobalDomain AppleShowAllExtensions -bool true
+defaults_write NSGlobalDomain AppleShowAllExtensions -bool false   # hide extensions ("Ghostty", not "Ghostty.app")
 defaults_write com.apple.finder FXPreferredViewStyle -string "Nlsv"   # list view
 defaults_write com.apple.finder ShowPathbar -bool true
 defaults_write com.apple.finder ShowStatusBar -bool true
