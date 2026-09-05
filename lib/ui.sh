@@ -360,6 +360,7 @@ ui_welcome() {
 
 ui_complete() {
   local elapsed="$1"
+  local title="${2:-Setup complete}"
 
   # Format elapsed time nicely
   local time_str
@@ -395,7 +396,7 @@ ui_complete() {
       --border-foreground '#3F3F46' \
       --padding "1 3" \
       --align center \
-      "$(if [[ "${DRY_RUN:-0}" == "1" ]]; then gum style --foreground '#F59E0B' --bold '○  Dry run complete — nothing was changed'; else gum style --foreground '#22C55E' --bold '✓  Setup complete'; fi)" \
+      "$(if [[ "${DRY_RUN:-0}" == "1" ]]; then gum style --foreground '#F59E0B' --bold '○  Dry run complete — nothing was changed'; else gum style --foreground '#22C55E' --bold "✓  ${title}"; fi)" \
       "" \
       "${stats}" \
       "$(gum style --foreground '#6B7280' "${time_str}")"
@@ -404,7 +405,7 @@ ui_complete() {
       echo "  ○ Dry run complete in ${time_str} — nothing was changed"
       echo "    ${_UI_COUNT_PLANNED} would change, ${_UI_COUNT_SKIPPED} unchanged, ${_UI_COUNT_ERRORS} errors"
     else
-      echo "  ✓ Setup complete in ${time_str}"
+      echo "  ✓ ${title} in ${time_str}"
       echo "    ${_UI_COUNT_INSTALLED} installed, ${_UI_COUNT_SKIPPED} unchanged, ${_UI_COUNT_ERRORS} errors"
     fi
   fi

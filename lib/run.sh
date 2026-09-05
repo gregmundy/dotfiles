@@ -14,6 +14,10 @@ set -euo pipefail
 
 dry_run() { [[ "${DRY_RUN:-0}" == "1" ]]; }
 
+# "$HOME/x" -> "~/x" for messages. Uses a variable for the tilde because
+# bash 3.2 keeps the backslash when the replacement is an escaped tilde.
+pretty_path() { local t='~'; printf '%s' "${1/#"$HOME"/$t}"; }
+
 run() {
   if dry_run; then
     ui_plan "run: $*"
@@ -28,7 +32,7 @@ run() {
 deploy_file() {
   local src="$1" dest="$2" mode="${3:-}"
   local name
-  name="${dest/#"$HOME"/\~}"
+  name="$(pretty_path "$dest")"
 
   if [[ ! -f "$src" ]]; then
     ui_error "Missing source file: $src"
@@ -87,7 +91,7 @@ defaults_write() {
 # Append a line to a file unless that exact line is already present.
 append_line() {
   local file="$1" line="$2"
-  local name="${file/#"$HOME"/\~}"
+  local name; name="$(pretty_path "$file")"
   if [[ -f "$file" ]] && grep -qxF -- "$line" "$file"; then
     ui_skip "$name already contains: $line"
     return 0
@@ -104,7 +108,7 @@ append_line() {
 # Write a file with the given content unless it already has that content.
 write_file() {
   local dest="$1" content="$2"
-  local name="${dest/#"$HOME"/\~}"
+  local name; name="$(pretty_path "$dest")"
   if [[ -f "$dest" ]] && [[ "$(cat "$dest")" == "$content" ]]; then
     ui_skip "$name already up to date"
     return 0

@@ -6,6 +6,8 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # shellcheck source=/dev/null
 source "${ROOT_DIR}/lib/ui.sh"
+# shellcheck source=/dev/null
+source "${ROOT_DIR}/lib/sudo.sh"
 
 INSTALL_DIR="${ROOT_DIR}/install"
 
@@ -128,23 +130,9 @@ if [[ "$DRY_RUN" == "1" ]]; then
   ui_note "Dry run: reporting what would change; nothing is installed, written, or prompted for."
 fi
 
-SUDO_KEEPALIVE_PID=""
-if [[ -t 0 && "$DRY_RUN" != "1" ]]; then
+if [[ "$DRY_RUN" != "1" && -t 0 ]]; then
   ui_step "Setup needs administrator rights for a few steps (xcode-select, mas, .pkg casks)."
-  sudo -v
-  # The refresher must not inherit set -e: a single failed `sudo -n` (e.g.
-  # right after something invalidates the ticket) would kill it silently and
-  # every later root step would prompt again.
-  (
-    set +e
-    while true; do
-      sudo -n true 2>/dev/null || true
-      sleep 50
-      kill -0 "$$" 2>/dev/null || exit 0
-    done
-  ) &
-  SUDO_KEEPALIVE_PID=$!
-  export SETUP_SUDO_CACHED=1
+  sudo_keepalive_start
 fi
 
 # App Store preflight. Xcode, Developer, and TestFlight install through mas,
@@ -188,7 +176,7 @@ trap 'FAILED_CMD="${BASH_COMMAND}"' ERR
 on_exit() {
   local rc=$?
   local failed_cmd="${FAILED_CMD:-${BASH_COMMAND}}"
-  [[ -n "${SUDO_KEEPALIVE_PID}" ]] && kill "${SUDO_KEEPALIVE_PID}" 2>/dev/null
+  sudo_keepalive_stop
   if [[ "$rc" -ne 0 && "$SETUP_DONE" -eq 0 && -n "$CURRENT_INSTALLER" ]]; then
     ui_error "Setup aborted in ${CURRENT_INSTALLER}: \"${failed_cmd}\" failed (exit ${rc})"
   fi

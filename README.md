@@ -183,6 +183,20 @@ Setup asks for your password once at the start and keeps the sudo session alive 
 
 ---
 
+## Uninstalling
+
+```bash
+./uninstall.sh                  # dry run: shows everything --apply would remove
+./uninstall.sh --apply          # do it (asks you to type "uninstall")
+./uninstall.sh --configs --runtimes   # only some tiers
+```
+
+Tiers, applied in this order: `--configs` (deployed dotfiles, Oh My Zsh, VS Code extensions, Claude Code, Docker login item, setup backups), `--runtimes` (nvm, asdf, rustup, uv Pythons, Go workspace), `--apps` (every cask setup installs, zapped; App Store apps; Xcode), `--packages` (every formula setup installs; taps), `--defaults` (macOS defaults back to system defaults), `--homebrew` (Homebrew and the Command Line Tools).
+
+Package and app lists are derived from the installers, so they can't drift. Config files are moved into `~/.dotfiles-uninstall-<timestamp>/` rather than deleted, and a dotfile you've edited by hand is left in place with a note. It never touches `~/Development`, SSH keys, Claude Code sessions, or your documents. For a true wipe, use macOS's Erase All Content and Settings; this is for removing what setup put there while keeping the machine.
+
+---
+
 ## Running part of the setup
 
 ```bash
