@@ -34,18 +34,21 @@ mas_install_app() {
     log "✓ ${name} already installed"
     return 0
   fi
-  if [[ -d "${APPS_DIR}/${name}.app" ]]; then
-    log "${name} is present but incomplete (missing App Store receipt or bad signature) — reinstalling..."
+  local app="${APPS_DIR}/${name}.app"
+  if [[ -d "$app" ]]; then
+    # mas identifies installed apps via Spotlight metadata on the bundle, so
+    # it treats an incomplete bundle as installed and refuses to reinstall.
+    # Move it aside (root-owned when a failed mas run left it) and install clean.
+    log "${name} is present but incomplete (missing App Store receipt or bad signature) — replacing..."
+    run sudo mv "$app" "${HOME}/.Trash/${name}.app.broken-$(date +%Y%m%d-%H%M%S)"
   fi
-  if run mas install "${id}"; then
-    if dry_run || app_healthy "$name"; then
-      log "✓ ${name} installed"
-    else
-      log "ERROR: ${name} still fails verification after install"
-      log "NOTE: ${name}: open App Store.app, sign in, and reinstall it from your Purchased list."
-    fi
+  if run mas install "${id}" && { dry_run || app_healthy "$name"; }; then
+    log "✓ ${name} installed"
   else
-    log "NOTE: ${name} was not installed — sign in to App Store.app and run './setup.sh apple-dev'."
+    log "ERROR: ${name} could not be installed or verified via mas"
+    # The App Store app itself always works once signed in; open the listing.
+    run open "macappstore://apps.apple.com/app/id${id}" || true
+    log "NOTE: ${name}: App Store.app was opened on its listing — click Get/Install, then re-run './setup.sh apple-dev' to verify."
   fi
 }
 
