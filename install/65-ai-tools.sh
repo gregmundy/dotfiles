@@ -15,8 +15,8 @@ brew_install_cask chatgpt
 # Codex (OpenAI desktop app for managing coding agents)
 #
 # Cask token is `codex-app`, NOT `codex` — the `codex` cask is the terminal
-# CLI, which is already managed via Node (@openai/codex in
-# dotfiles/nvm/default-packages). Installing both would be redundant.
+# CLI, which install/75-dev-ides.sh installs via OpenAI's own standalone
+# installer instead. Installing both would be redundant.
 #
 # WARNING: codex-app is deprecated in Homebrew (discontinued upstream) and is
 # scheduled to be disabled on 2027-07-12. Kept for parity with the current

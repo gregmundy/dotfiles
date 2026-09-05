@@ -19,5 +19,15 @@ else
   ui_success "claude-code"
 fi
 
+# Codex CLI via OpenAI's standalone installer (self-updates with `codex update`).
+# Installs to ~/.local/bin/codex -> ~/.codex/packages/standalone. Not npm or the
+# brew cask, so there is exactly one copy and it manages itself.
+if command -v codex >/dev/null 2>&1 || [[ -x "${HOME}/.local/bin/codex" ]]; then
+  ui_skip "codex"
+else
+  ui_spin_download "Installing codex..." bash -c 'curl -fsSL https://chatgpt.com/codex/install.sh | CODEX_NON_INTERACTIVE=1 sh'
+  ui_success "codex"
+fi
+
 brew_install_formula opencode
 log "✓ Development IDEs installed"

@@ -55,7 +55,7 @@ cd dotfiles
 | **Productivity** | Raycast, Obsidian, Notion, Todoist, Linear, Figma, AppCleaner |
 | **Communication** | Slack, Discord, Zoom |
 | **Browsers** | Chrome, DuckDuckGo |
-| **AI** | Claude, ChatGPT, Cursor, Cursor CLI, opencode, LM Studio, Ollama, llamavm |
+| **AI** | Claude, Claude Code, ChatGPT, Codex (app + CLI), Cursor, Cursor CLI, opencode, LM Studio, Ollama, llamavm |
 | **Media** | Spotify |
 | **Security** | 1Password, 1Password CLI |
 | **Entertainment** | Steam |
@@ -171,6 +171,9 @@ Enable in 1Password: **Settings → Developer → SSH Agent**
 
 ### Git identity and commit signing
 The installer prompts for your name and email, stored in `~/.gitconfig.local` (not committed). It also asks for an SSH public key to sign commits with via the 1Password agent; leave it blank to skip, and fill in `user.signingkey` later to turn signing on.
+
+### Claude Code and Codex
+Both use their vendors' own installers (not Homebrew or npm) and update themselves; `claude update` and `codex update` force it.
 
 ### Node
 Node is managed by nvm with the default alias pinned to the installed LTS. If `node` ever resolves to `/opt/homebrew/bin/node` (a dependency of mongosh and opencode), re-run `./setup.sh node` to repin.

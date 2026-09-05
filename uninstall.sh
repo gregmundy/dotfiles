@@ -28,7 +28,7 @@ Dry run by default. Prints everything it would remove; nothing changes.
 
 Tiers (none given = all of them, in this order):
   --configs        Deployed dotfiles, Oh My Zsh, VS Code extensions, Claude Code
-                   binary, Docker login item, setup backups  (moved to a trash dir)
+                   and Codex binaries, Docker login item, setup backups
   --runtimes       nvm, asdf, rustup/cargo, uv Pythons, Go workspace, llamavm
   --apps           Every cask setup installs (zapped), App Store apps, Xcode
   --packages       Every formula setup installs, taps, brew autoremove
@@ -157,9 +157,12 @@ tier_configs() {
     done < "${D}/vscode/extensions.txt"
   fi
 
-  # Claude Code (its own installer, not Homebrew). Sessions in ~/.claude stay.
+  # Claude Code and Codex (their own installers, not Homebrew).
+  # Sessions in ~/.claude and auth/config in ~/.codex stay.
   remove_tree "${HOME}/.local/bin/claude"
   remove_tree "${HOME}/.local/share/claude"
+  remove_tree "${HOME}/.local/bin/codex"
+  remove_tree "${HOME}/.codex/packages"
 
   # Docker login item.
   if osascript -e 'tell application "System Events" to get name of every login item' 2>/dev/null | grep -qw Docker; then
