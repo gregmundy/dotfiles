@@ -136,14 +136,21 @@ brew_install_cask() {
     # the cask ships. A hand-installed app at any other version makes adopt
     # fail ("existing App is different"), so fall back to --force, which
     # replaces the app with Homebrew's copy and brings it under management.
-    if brew install --cask --adopt "$name"; then
+    # The adopt attempt's output is held back: its refusal reads like a
+    # failure even though the --force retry usually succeeds. It is only
+    # shown if the retry fails too.
+    local adopt_log
+    adopt_log="$(mktemp)"
+    if brew install --cask --adopt "$name" >"$adopt_log" 2>&1; then
       ui_success "$name"
-    elif brew install --cask --force "$name"; then
-      ui_success "$name (replaced an existing copy with the cask version)"
+    elif grep -q "existing App is different" "$adopt_log" && brew install --cask --force "$name"; then
+      ui_success "$name (existing copy was a different version; replaced with the cask version)"
     else
       # One GUI app failing must not abort the whole run.
+      cat "$adopt_log"
       ui_error "$name failed to install — see output above"
       ui_defer_note "Cask $name failed to install. Fix the cause and re-run the installer that declares it."
     fi
+    rm -f "$adopt_log"
   fi
 }
